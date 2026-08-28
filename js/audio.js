@@ -17,7 +17,7 @@ const AudioCaller = (() => {
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === "suspended") audioCtx.resume();
-    } catch {}
+    } catch (e) {}
     player.src = "audio/chimes/silent.wav";
     player.play().catch(() => {});
     if ("speechSynthesis" in window) {

@@ -64,11 +64,11 @@ window.__bingoActive = () => state.called.length > 0 || state.playing;
 
 function loadSettings() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...defaultSettings };
-    return { ...defaultSettings, ...JSON.parse(raw) };
-  } catch {
-    return { ...defaultSettings };
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return Object.assign({}, defaultSettings);
+    return Object.assign({}, defaultSettings, JSON.parse(raw));
+  } catch (e) {
+    return Object.assign({}, defaultSettings);
   }
 }
 
@@ -268,10 +268,9 @@ async function announce(n, isFirst) {
   if (s.playChime && s.automaticCalling) {
     await AudioCaller.playChime(s.chime);
   }
-  await AudioCaller.callNumber(n, {
-    ...s,
+  await AudioCaller.callNumber(n, Object.assign({}, s, {
     firstCall: isFirst ? n : null,
-  });
+  }));
 }
 
 async function callNext(fromAuto = false) {
@@ -427,10 +426,10 @@ function importSettings(file) {
   const reader = new FileReader();
   reader.onload = () => {
     try {
-      state.settings = { ...defaultSettings, ...JSON.parse(reader.result) };
+      state.settings = Object.assign({}, defaultSettings, JSON.parse(reader.result));
       saveSettings();
       location.reload();
-    } catch {
+    } catch (e) {
       alert("Could not import that settings file.");
     }
   };
