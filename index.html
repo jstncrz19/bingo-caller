@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Let's Play Bingo | Online Bingo Caller</title>
+  <meta name="description" content="Free online bingo caller with a live board, patterns, autoplay, and spoken audio for every number." />
+  <link rel="icon" href="icons/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body data-theme="dark">
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">B</div>
+      <div>
+        <h1>Let's Play <span>Bingo</span></h1>
+        <small>Online Bingo Caller</small>
+      </div>
+    </a>
+    <div class="header-actions">
+      <a class="nav-link" href="cards.html">Card Generator</a>
+      <div class="icon-btn-row">
+        <button class="icon-btn" id="btn-fs" title="Full screen" aria-label="Full screen">
+          <svg viewBox="0 0 24 24"><path d="M7 3H3v4h2V5h2V3zm14 4h-2V5h-2V3h4v4zM5 17H3v4h4v-2H5v-2zm16 0h-2v2h-2v2h4v-4z"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-theme" title="Light / dark mode" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24"><path d="M12 4a8 8 0 108 8 6.5 6.5 0 01-8-8z"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-settings" title="Game settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.5 7.5 0 000-1.88l2.03-1.58-1.92-3.32-2.39.96a7.4 7.4 0 00-1.63-.94L14.5 3h-5l-.73 2.18c-.58.22-1.12.54-1.63.94l-2.39-.96L2.83 8.48l2.03 1.58a7.5 7.5 0 000 1.88L2.83 13.52l1.92 3.32 2.39-.96c.5.4 1.05.72 1.63.94L9.5 21h5l.73-2.18c.58-.22 1.12-.54 1.63-.94l2.39.96 1.92-3.32-2.03-1.58zM12 15.5A3.5 3.5 0 1115.5 12 3.5 3.5 0 0112 15.5z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout classic" id="layout">
+    <section class="board-wrap">
+      <div id="board" class="board" aria-label="Bingo board"></div>
+    </section>
+
+    <aside class="side-wrap">
+      <div class="call-cluster">
+        <div id="previous-balls" class="call-cluster"></div>
+        <div id="current-ball" class="ball current placeholder"></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat" id="stat-total"><span>Total Calls</span><b id="total-calls">0</b></div>
+        <div class="stat" id="stat-game"><span>Game</span><b id="game-number-display">--</b></div>
+        <div class="stat" id="stat-current"><span>Current</span><b id="current-call-num">--</b></div>
+        <div class="stat" id="stat-prev"><span>Previous</span><b id="prev-call-num">--</b></div>
+        <div class="stat" id="stat-prize"><span>Prize</span><b id="prize-display">--</b></div>
+        <div class="stat" id="stat-hot"><span>Hot Ball</span><b id="hot-prize">--</b></div>
+      </div>
+
+      <div class="pattern-box">
+        <h3>
+          <span id="pattern-title">Coverall / Blackout</span>
+          <span class="skip-pill" id="skip-pill">Skipping unused</span>
+        </h3>
+        <div id="pattern-grid" class="pattern-grid"></div>
+        <select id="pattern-menu" style="width:100%;margin-top:10px;background:var(--bg-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px;"></select>
+      </div>
+
+      <div id="countdown" class="countdown"><span></span></div>
+
+      <div class="controls" id="controls">
+        <button class="btn btn-start" id="btn-start">Start Game</button>
+        <button class="btn btn-next" id="btn-next" hidden>Call Next Number</button>
+        <button class="btn btn-play" id="btn-play">Play</button>
+        <button class="btn btn-repeat" id="btn-repeat">Repeat Number</button>
+        <button class="btn btn-shuffle" id="btn-shuffle">Shuffle / Blower</button>
+        <button class="btn btn-reset" id="btn-reset">Reset Board</button>
+      </div>
+
+      <div class="history">
+        <details>
+          <summary>Call History</summary>
+          <div id="history-list" class="history-list"></div>
+        </details>
+      </div>
+    </aside>
+  </main>
+
+  <p class="footer" id="footer">Independent bingo caller inspired by the hall-style board at letsplaybingo.io. For entertainment only.</p>
+
+  <div class="overlay" id="overlay"></div>
+  <aside class="settings" id="settings" aria-label="Game settings">
+    <header>
+      <strong>Game Settings</strong>
+      <button class="icon-btn" id="btn-close-settings" aria-label="Close settings">✕</button>
+    </header>
+    <div class="settings-body">
+      <div class="settings-group">
+        <h4>Current Game</h4>
+        <div class="field"><label>Game number</label><input id="set-game-number" type="text" maxlength="8" /></div>
+        <div class="field"><label>Prize<small>Shown on the main screen</small></label><input id="set-prize" type="text" /></div>
+        <div class="field"><label>Pattern</label><select id="set-pattern"></select></div>
+        <div class="field"><label>Show pattern title</label><input id="set-show-pattern-title" type="checkbox" /></div>
+        <div class="field"><label>Skip unused numbers<small>Only call letters used by the pattern</small></label><input id="set-skip" type="checkbox" /></div>
+        <div class="field"><label>Show skip indicator</label><input id="set-skip-indicator" type="checkbox" /></div>
+        <div class="field"><label>Hide unused numbers on board</label><input id="set-hide-unused" type="checkbox" /></div>
+        <div class="field"><label>Pause after X calls</label><input id="set-pause-enabled" type="checkbox" /></div>
+        <div class="field"><label>Calls before pause</label><input id="set-pause-after" type="number" min="1" max="75" /></div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Session</h4>
+        <div class="field"><label>Automatic calling</label><input id="set-auto" type="checkbox" /></div>
+        <div class="field"><label>Time between calls (sec)</label><input id="set-interval" type="number" min="2" max="30" /></div>
+        <div class="field"><label>Show next-call countdown</label><input id="set-countdown" type="checkbox" /></div>
+        <div class="field"><label>Manual mode<small>Click balls on the board</small></label><input id="set-manual" type="checkbox" /></div>
+        <div class="field"><label>Hot ball</label><input id="set-hot" type="checkbox" /></div>
+        <div class="field"><label>Hot ball number</label><input id="set-hot-number" type="number" min="1" max="75" /></div>
+        <div class="field"><label>Hot ball title</label><input id="set-hot-title" type="text" /></div>
+        <div class="field"><label>Hot ball prize</label><input id="set-hot-prize" type="text" /></div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Audio</h4>
+        <div class="field">
+          <label>Audible caller<small>Recorded WAV files play on every call</small></label>
+          <select id="set-caller-type">
+            <option value="recorded">Recorded audio (recommended)</option>
+            <option value="speech">Speech synthesis</option>
+          </select>
+        </div>
+        <div class="field"><label>Caller voice</label><select id="set-voice"></select></div>
+        <div class="field"><label>Speech rate</label><input id="set-rate" type="number" min="0.6" max="1.4" step="0.1" /></div>
+        <div class="field"><button class="btn btn-next" id="preview-voice" type="button">Preview voice</button></div>
+        <div class="field"><label>Call letters<small>Example: B12</small></label><input id="set-letters" type="checkbox" /></div>
+        <div class="field"><label>Chatty caller</label><input id="set-chatty" type="checkbox" /></div>
+        <div class="field"><label>Call numbers twice</label><input id="set-twice" type="checkbox" /></div>
+        <div class="field"><label>Play audible chime</label><input id="set-chime-on" type="checkbox" /></div>
+        <div class="field">
+          <label>Chime</label>
+          <select id="set-chime">
+            <option value="ding">Ding</option>
+            <option value="bell">Bell</option>
+            <option value="pop">Pop</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Controls</h4>
+        <div class="field"><label>Hide on-screen controls</label><input id="set-hide-controls" type="checkbox" /></div>
+        <div class="field"><label>Keyboard controls<small>Space play/pause, → next, R reset</small></label><input id="set-keyboard" type="checkbox" /></div>
+        <div class="field"><label>Stoplight control colors</label><input id="set-stoplight" type="checkbox" /></div>
+        <div class="field"><label>Hide shuffle button</label><input id="set-hide-shuffle" type="checkbox" /></div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Call Tracking</h4>
+        <div class="field"><label>Show current call</label><input id="set-show-current" type="checkbox" /></div>
+        <div class="field"><label>Show previous calls</label><input id="set-show-prev" type="checkbox" /></div>
+        <div class="field"><label>Previous calls to show</label><input id="set-prev-count" type="number" min="1" max="5" /></div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Pattern Options</h4>
+        <div class="field"><label>Show main screen pattern menu</label><input id="set-pattern-menu" type="checkbox" /></div>
+        <div class="field"><label>Disable pattern drawing</label><input id="set-lock-pattern" type="checkbox" /></div>
+        <div class="field"><label>Lock pattern while game is in play</label><input id="set-lock-play" type="checkbox" /></div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Layout & Display</h4>
+        <div class="field">
+          <label>Layout</label>
+          <select id="set-layout">
+            <option value="classic">Classic</option>
+            <option value="easy">Easy View</option>
+            <option value="stacked">Stacked</option>
+            <option value="vertical">Vertical</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Theme</label>
+          <select id="set-theme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+        <div class="field"><label>Hide footer</label><input id="set-hide-footer" type="checkbox" /></div>
+        <div class="field"><label>Show letters on balls</label><input id="set-show-letters" type="checkbox" /></div>
+        <div class="field"><label>Show game number</label><input id="set-show-game" type="checkbox" /></div>
+        <div class="field"><label>Show total calls</label><input id="set-show-total" type="checkbox" /></div>
+        <div class="field"><label>Show current call number</label><input id="set-show-cur-num" type="checkbox" /></div>
+        <div class="field"><label>Show previous call number</label><input id="set-show-prev-num" type="checkbox" /></div>
+        <div class="field"><label>Colored rows</label><input id="set-colored" type="checkbox" /></div>
+      </div>
+
+      <div class="settings-group">
+        <h4>Backup</h4>
+        <div class="field"><button class="btn btn-next" id="export-settings" type="button">Export settings</button></div>
+        <div class="field"><label>Import settings</label><input id="import-settings" type="file" accept="application/json" /></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="modal" id="reset-modal">
+    <div class="modal-card">
+      <h3>Reset the board?</h3>
+      <p>This clears the current game and call history. Settings are kept.</p>
+      <div class="modal-actions">
+        <button class="btn btn-reset" id="cancel-reset">Cancel</button>
+        <button class="btn btn-start" id="confirm-reset">Reset Board</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/patterns.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

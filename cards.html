@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bingo Card Generator</title>
+  <link rel="icon" href="icons/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    @media print {
+      .app-header, .toolbar, .footer { display: none !important; }
+      .bingo-card { break-inside: avoid; }
+      body { background: #fff; color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">B</div>
+      <div>
+        <h1>Let's Play <span>Bingo</span></h1>
+        <small>Card Generator</small>
+      </div>
+    </a>
+    <a class="nav-link active" href="index.html">Back to Caller</a>
+  </header>
+  <main class="page">
+    <h2>Printable Bingo Cards</h2>
+    <p>Each card uses standard 75-ball ranges with a free space in the center. Cards are generated on your device and are not saved.</p>
+    <div class="toolbar">
+      <label>Cards <input id="count" type="number" min="1" max="30" value="6" style="width:4rem;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);" /></label>
+      <button class="btn btn-start" id="generate">Generate</button>
+      <button class="btn btn-next" onclick="window.print()">Print</button>
+    </div>
+    <div id="cards" class="cards-grid"></div>
+  </main>
+  <script>
+    const COLORS = { B: "#c62828", I: "#1565c0", N: "#607d8b", G: "#2e7d32", O: "#ef6c00" };
+    function pick(min, max, count) {
+      const pool = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      return pool.slice(0, count).sort((a, b) => a - b);
+    }
+    function card() {
+      return {
+        B: pick(1, 15, 5),
+        I: pick(16, 30, 5),
+        N: pick(31, 45, 5),
+        G: pick(46, 60, 5),
+        O: pick(61, 75, 5),
+      };
+    }
+    function render() {
+      const n = Math.min(30, Math.max(1, Number(document.getElementById("count").value) || 1));
+      const wrap = document.getElementById("cards");
+      wrap.innerHTML = "";
+      for (let i = 0; i < n; i++) {
+        const c = card();
+        const letters = ["B", "I", "N", "G", "O"];
+        let rows = "";
+        for (let r = 0; r < 5; r++) {
+          rows += "<tr>" + letters.map((L) => {
+            if (L === "N" && r === 2) return `<td class="free">FREE</td>`;
+            return `<td>${c[L][r]}</td>`;
+          }).join("") + "</tr>";
+        }
+        wrap.innerHTML += `<article class="bingo-card"><table>
+          <tr>${letters.map((L) => `<th style="background:${COLORS[L]}">${L}</th>`).join("")}</tr>
+          ${rows}</table></article>`;
+      }
+    }
+    document.getElementById("generate").addEventListener("click", render);
+    render();
+  </script>
+</body>
+</html>
