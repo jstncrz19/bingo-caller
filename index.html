@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=21" />
+  <link rel="stylesheet" href="css/styles.css?v=22" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -100,6 +100,7 @@
         <div class="field"><label>Game number</label><input id="set-game-number" type="text" maxlength="8" /></div>
         <div class="field"><label>Prize<small>Shown on the main screen</small></label><input id="set-prize" type="text" /></div>
         <div class="field"><label>Pattern</label><select id="set-pattern"></select></div>
+        <div class="field"><div id="settings-pattern-grid" class="settings-pattern-grid"></div></div>
         <div class="field"><label>Show pattern title</label><input id="set-show-pattern-title" type="checkbox" /></div>
         <div class="field"><label>Skip unused numbers<small>Only call letters used by the pattern</small></label><input id="set-skip" type="checkbox" /></div>
         <div class="field"><label>Show skip indicator</label><input id="set-skip-indicator" type="checkbox" /></div>
@@ -219,9 +220,9 @@
     <div style="font-size:15px;color:#bbb;">Landscape orientation is required for the best experience.</div>
   </div>
 
-  <script src="js/patterns.js?v=21"></script>
-  <script src="js/audio.js?v=21"></script>
-  <script src="js/app.js?v=21"></script>
+  <script src="js/patterns.js?v=22"></script>
+  <script src="js/audio.js?v=22"></script>
+  <script src="js/app.js?v=22"></script>
 
   <script>
     (function () {
@@ -246,7 +247,42 @@
   </script>
 
   <script>
-    window.APP_VERSION = "21";
+    (function () {
+      var moved = false;
+      function isPhoneLandscape() {
+        return window.innerWidth <= 980 && window.innerHeight > 0;
+      }
+      function apply() {
+        if (!isPhoneLandscape() || moved) return;
+        moved = true;
+        document.body.classList.add("phone-layout");
+        var header = document.querySelector(".app-header");
+        var brand = document.querySelector(".brand");
+        var acts = document.querySelector(".header-actions");
+        var stats = document.querySelector(".stats");
+        if (header && acts && stats) {
+          var slot = document.createElement("div");
+          slot.className = "hdr-stats";
+          header.insertBefore(slot, acts);
+          slot.appendChild(stats);
+        }
+        var bw = document.querySelector(".board-wrap");
+        var board = document.getElementById("board");
+        var bottomControls = document.querySelector(".bottom-controls");
+        if (bw && board && bottomControls) {
+          bw.appendChild(bottomControls);
+        }
+        var bwEl = document.querySelector(".bottom-wrap");
+        if (bwEl) bwEl.style.display = "none";
+      }
+      document.addEventListener("DOMContentLoaded", function () { setTimeout(apply, 0); });
+      window.addEventListener("resize", apply);
+      window.addEventListener("orientationchange", function () { setTimeout(apply, 300); });
+    })();
+  </script>
+
+  <script>
+    window.APP_VERSION = "22";
     (function () {
       function check() {
         if (window.__bingoActive && window.__bingoActive()) return;

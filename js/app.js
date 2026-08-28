@@ -214,6 +214,19 @@ function renderPattern() {
   var menu = document.getElementById("pattern-menu");
   var skip = document.getElementById("skip-pill");
   var pattern = PATTERNS.find(function (p) { return p.id === state.settings.patternId; });
+
+  var cur = activePattern();
+  var settingsGrid = document.getElementById("settings-pattern-grid");
+  if (settingsGrid) {
+    settingsGrid.innerHTML = "";
+    for (var sr = 0; sr < 5; sr++) {
+      for (var sc = 0; sc < 5; sc++) {
+        var scEl = document.createElement("span");
+        scEl.className = "pattern-cell s" + (cur[sr][sc] ? " on" : "") + (sr === 2 && sc === 2 ? " free" : "");
+        settingsGrid.appendChild(scEl);
+      }
+    }
+  }
   setTimeout(function () {
     if (title) title.textContent = state.settings.showPatternTitle ? (pattern ? pattern.name : "Custom") : "Pattern";
     if (skip) skip.classList.toggle("show", state.settings.skipUnused && state.settings.showSkipIndicator);
