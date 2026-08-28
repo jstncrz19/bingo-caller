@@ -124,12 +124,15 @@ button, select, input { font-family: inherit; }
 .layout.vertical { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
 
 @media (min-width: 641px) and (orientation: landscape) {
-  body { overflow: hidden; }
+  html, body { overflow: hidden; }
+  body { height: 100vh; display: flex; flex-direction: column; }
+  .app-header { flex: 0 0 auto; }
   .layout.classic {
-    height: calc(100vh - 64px);
+    flex: 1 1 auto; min-height: 0; height: auto;
     grid-template-rows: minmax(0, 1fr) auto;
     overflow: hidden;
   }
+  .footer { flex: 0 0 auto; }
 }
 .layout.classic .board-wrap { grid-column: 1; grid-row: 1; }
 .layout.classic .side-wrap { grid-column: 2; grid-row: 1; }
