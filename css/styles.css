@@ -49,6 +49,8 @@ body {
 }
 
 button, select, input { font-family: inherit; }
+button, a, .cell, .pattern-cell, .stat, .board-row { touch-action: manipulation; }
+html, body { touch-action: manipulation; }
 
 .app-header {
   display: flex;

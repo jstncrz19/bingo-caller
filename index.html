@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Let's Play Bingo | Online Bingo Caller</title>
   <meta name="description" content="Free online bingo caller with a live board, patterns, autoplay, and spoken audio for every number." />
   <link rel="icon" href="icons/favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=18" />
+  <link rel="stylesheet" href="css/styles.css?v=19" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -213,12 +213,40 @@
     </div>
   </div>
 
-  <script src="js/patterns.js?v=18"></script>
-  <script src="js/audio.js?v=18"></script>
-  <script src="js/app.js?v=18"></script>
+  <div id="rotate-overlay" style="display:none;position:fixed;inset:0;z-index:100000;background:#111;color:#fff;text-align:center;font-family:system-ui,sans-serif;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:24px;">
+    <div style="font-size:44px;">&#8630;</div>
+    <div style="font-size:22px;font-weight:800;">Please rotate your device</div>
+    <div style="font-size:15px;color:#bbb;">Landscape orientation is required for the best experience.</div>
+  </div>
+
+  <script src="js/patterns.js?v=19"></script>
+  <script src="js/audio.js?v=19"></script>
+  <script src="js/app.js?v=19"></script>
 
   <script>
-    window.APP_VERSION = "18";
+    (function () {
+      var overlay = document.getElementById("rotate-overlay");
+      function isPhone() {
+        return (window.innerWidth <= 980);
+      }
+      function update() {
+        if (!overlay) return;
+        var portrait = window.innerHeight > window.innerWidth;
+        var phone = isPhone();
+        if (phone && portrait) {
+          overlay.style.display = "flex";
+        } else {
+          overlay.style.display = "none";
+        }
+      }
+      window.addEventListener("resize", update);
+      window.addEventListener("orientationchange", function () { setTimeout(update, 300); });
+      update();
+    })();
+  </script>
+
+  <script>
+    window.APP_VERSION = "19";
     (function () {
       function check() {
         if (window.__bingoActive && window.__bingoActive()) return;
