@@ -38,6 +38,7 @@ body {
   font-family: "Nunito", "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
+  height: 100vh;
   height: 100dvh;
   min-height: 0;
   display: flex;
@@ -277,8 +278,7 @@ button, select, input { font-family: inherit; }
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 3px;
-  width: min(100%, calc(100dvh * 0.42));
-  max-width: 100%;
+  width: 80%;
   margin: 0 auto;
 }
 .pattern-cell {
