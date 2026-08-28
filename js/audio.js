@@ -83,14 +83,8 @@ const AudioCaller = (() => {
   async function callNumber(n, settings) {
     unlock();
     if (settings.callerType === "speech") {
-      if (settings.chatty && n === settings.firstCall) {
-        await speak("Let's play bingo!", settings.voiceURI, settings.speechRate);
-      }
       await speak(phraseFor(n, settings), settings.voiceURI, settings.speechRate);
       return;
-    }
-    if (settings.chatty && n === settings.firstCall) {
-      await playFile("audio/calls/intro.wav");
     }
     await playFile(fileFor(n));
     if (settings.callTwice) {
