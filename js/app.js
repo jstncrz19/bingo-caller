@@ -449,6 +449,16 @@ function toggleFullscreen() {
   var fs = d.fullscreenElement || d.webkitFullscreenElement;
   var req = el.requestFullscreen || el.webkitRequestFullscreen;
   var exit = d.exitFullscreen || d.webkitExitFullscreen;
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent || "") && !window.MSStream;
+  if (isIOS) {
+    try {
+      if (window.__dbgD) window.__dbgD("INFO: iOS Safari doesn't support Fullscreen API. Use Add to Home Screen for fullscreen.");
+      if (!(window.navigator.standalone || false)) {
+        window.alert("Fullscreen isn't supported in iOS Safari.\n\nTo run this fullscreen: tap the Share button, then \"Add to Home Screen\", and open it from your home screen.");
+      }
+    } catch (e) {}
+    return;
+  }
   try {
     if (!fs) {
       if (req) req.call(el);

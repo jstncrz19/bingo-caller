@@ -200,8 +200,9 @@ button, select, input { font-family: inherit; }
   cursor: default;
   display: grid;
   place-items: center;
+  overflow: hidden;
   transition: transform .12s ease, background .15s ease, color .15s ease;
-  font-size: clamp(0.9rem, 1.7vw, 1.6rem);
+  font-size: clamp(0.6rem, 1.5vw, 1.4rem);
 }
 .cell.called {
   color: #fff;
@@ -470,10 +471,35 @@ button, select, input { font-family: inherit; }
 }
 
 @media (max-width: 980px) and (orientation: landscape) {
-  body { overflow-y: auto; height: auto; min-height: 100%; }
-  .layout { height: auto; flex: none; }
-  .layout.classic { grid-template-rows: auto auto; }
-  .board-wrap, .side-wrap { overflow: visible; max-height: none; }
+  body { overflow: hidden; height: 100vh; height: -webkit-fill-available; }
+  .layout { height: 100%; flex: none; overflow: hidden; gap: 8px; padding: 8px; }
+  .layout.classic { grid-template-columns: minmax(0, 1fr) 40vw; grid-template-rows: minmax(0, 1fr) auto; gap: 8px; }
+  .layout.classic .board-wrap { grid-column: 1; grid-row: 1; }
+  .layout.classic .side-wrap { grid-column: 2; grid-row: 1; }
+  .layout.classic .bottom-wrap { grid-column: 1 / -1; grid-row: 2; }
+  .layout.easy, .layout.stacked { grid-template-columns: 1fr; grid-template-rows: auto auto auto; }
+  .pattern-box { display: none; }
+  .history { display: none; }
+  .board-row { grid-template-columns: 22px repeat(15, minmax(0, 1fr)); gap: 2px; }
+  .board-wrap, .side-wrap { overflow: auto; min-height: 0; }
+  .letter-chip { height: 22px; font-size: 0.66rem; border-radius: 6px; }
+  .cell { font-size: clamp(0.42rem, 2.9vmin, 0.85rem); border-width: 1px; }
+  .ball.current { width: 66px; height: 66px; }
+  .ball.current .letter { font-size: 0.72rem; }
+  .ball.current .num { font-size: 1.7rem; }
+  .ball.prev { width: 30px; height: 30px; }
+  .ball.prev .letter { font-size: 0.5rem; }
+  .ball.prev .num { font-size: 0.8rem; }
+  .side-wrap > .call-cluster { gap: 6px; }
+  .bottom-wrap { padding: 8px 10px; gap: 10px; }
+  .stats { gap: 3px; }
+  .stat { padding: 3px 8px; min-width: 44px; }
+  .stat b { font-size: 0.8rem; }
+  .stat span { font-size: 0.52rem; }
+  .bottom-controls { flex: 1 1 auto; min-width: 0; flex-direction: row; align-items: center; }
+  .controls { gap: 4px; }
+  .btn { padding: 6px 10px; font-size: 0.72rem; border-radius: 8px; gap: 4px; }
+  .countdown { height: 7px; }
 }
 
 @media (min-width: 1280px) and (orientation: landscape) {
