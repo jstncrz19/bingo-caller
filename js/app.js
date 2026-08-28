@@ -51,6 +51,7 @@ const defaultSettings = {
 
 const state = {
   settings: loadSettings(),
+  gamesPlayed: Number(localStorage.getItem("bingo-games-played") || 0),
   called: [],
   remaining: [],
   playing: false,
@@ -59,6 +60,10 @@ const state = {
   firstCallOfGame: null,
   needsResetConfirm: false,
 };
+
+function saveGamesPlayed() {
+  localStorage.setItem("bingo-games-played", String(state.gamesPlayed));
+}
 
 function loadSettings() {
   try {
@@ -167,7 +172,7 @@ function renderCalls() {
   document.getElementById("prev-call-num").textContent = state.called[1]
     ? `${letterForNumber(state.called[1])}${state.called[1]}`
     : "--";
-  document.getElementById("game-number-display").textContent = state.settings.gameNumber || "--";
+  document.getElementById("game-number-display").textContent = String(state.gamesPlayed || 0);
   document.getElementById("prize-display").textContent = state.settings.prize || "--";
   document.getElementById("hot-prize").textContent = state.settings.hotBall
     ? `${state.settings.hotBallTitle}${state.settings.hotBallPrize ? ": " + state.settings.hotBallPrize : ""}`
@@ -293,6 +298,8 @@ async function callNext(fromAuto = false) {
 
 function startGame() {
   AudioCaller.unlock();
+  state.gamesPlayed += 1;
+  saveGamesPlayed();
   state.called = [];
   state.remaining = shuffle(eligibleNumbers());
   callNext(false);
