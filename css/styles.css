@@ -251,33 +251,34 @@ button, select, input { font-family: inherit; }
 .stats {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 4px;
 }
 .stat {
   background: var(--panel);
-  border-radius: 12px;
-  padding: 6px;
+  border-radius: 10px;
+  padding: 4px;
   text-align: center;
 }
-.stat b { display: block; font-size: 1.05rem; }
-.stat span { color: var(--muted); font-size: 0.66rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.stat b { display: block; font-size: 0.85rem; }
+.stat span { color: var(--muted); font-size: 0.58rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
 
-.pattern-box { background: var(--panel); border-radius: 14px; padding: 9px; flex: 1 1 auto; }
-.pattern-box h3 { margin: 0 0 6px; font-size: 0.85rem; display: flex; justify-content: space-between; }
+.pattern-box { background: var(--panel); border-radius: 12px; padding: 6px; flex: 1 1 auto; }
+.pattern-box h3 { margin: 0 0 4px; font-size: 0.7rem; display: flex; justify-content: space-between; }
 .pattern-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
-  max-width: 150px;
+  gap: 3px;
+  max-width: 120px;
   margin: 0 auto;
 }
 .pattern-cell {
   aspect-ratio: 1;
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid var(--line);
   background: var(--bg-2);
   cursor: pointer;
 }
+.pattern-box #pattern-menu { margin-top: 6px; padding: 4px; font-size: 0.75rem; }
 .pattern-cell.on { background: var(--accent); border-color: var(--accent); }
 .pattern-cell.free { outline: 1px dashed var(--muted); }
 .skip-pill {
