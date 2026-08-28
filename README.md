@@ -31,6 +31,8 @@ Click **Start Game** once so the browser allows sound.
 3. In the repo: **Settings → Pages → Deploy from a branch → main / root**.
 4. Your site will be at `https://YOUR_USERNAME.github.io/bingo-caller/`.
 
+Live at https://jstncrz19.github.io/bingo-caller/
+
 ## Regenerate call audio
 
 Windows:
