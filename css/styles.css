@@ -39,7 +39,8 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  min-height: 100dvh;
+  /* Overscan padding keeps content inside the TV's visible area */
+  padding: 1.5vh 1.5vw;
 }
 
 button, select, input { font-family: inherit; }
@@ -114,14 +115,13 @@ button, select, input { font-family: inherit; }
 
 .layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) 30vw;
   grid-template-rows: auto auto;
-  gap: 16px;
-  padding: 16px;
+  padding: 2vh 2vw;
 }
 .layout.easy { grid-template-columns: 1fr; }
 .layout.stacked { grid-template-columns: 1fr; }
-.layout.vertical { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
+.layout.vertical { grid-template-columns: 1fr; max-width: 560px; max-width: 60vw; margin: 0 auto; }
 
 @media (min-width: 641px) and (orientation: landscape) {
   .layout.classic {
@@ -167,11 +167,11 @@ button, select, input { font-family: inherit; }
   gap: 6px;
   align-items: center;
 }
-.board-row.colored-B { background: color-mix(in srgb, var(--ball-b) 22%, transparent); border-radius: 999px; padding: 4px; }
-.board-row.colored-I { background: color-mix(in srgb, var(--ball-i) 22%, transparent); border-radius: 999px; padding: 4px; }
-.board-row.colored-N { background: color-mix(in srgb, var(--ball-n) 18%, transparent); border-radius: 999px; padding: 4px; }
-.board-row.colored-G { background: color-mix(in srgb, var(--ball-g) 22%, transparent); border-radius: 999px; padding: 4px; }
-.board-row.colored-O { background: color-mix(in srgb, var(--ball-o) 22%, transparent); border-radius: 999px; padding: 4px; }
+.board-row.colored-B { background: rgba(198,40,40,.18); background: color-mix(in srgb, var(--ball-b) 22%, transparent); border-radius: 999px; padding: 4px; }
+.board-row.colored-I { background: rgba(21,101,192,.18); background: color-mix(in srgb, var(--ball-i) 22%, transparent); border-radius: 999px; padding: 4px; }
+.board-row.colored-N { background: rgba(236,239,241,.15); background: color-mix(in srgb, var(--ball-n) 18%, transparent); border-radius: 999px; padding: 4px; }
+.board-row.colored-G { background: rgba(46,125,50,.18); background: color-mix(in srgb, var(--ball-g) 22%, transparent); border-radius: 999px; padding: 4px; }
+.board-row.colored-O { background: rgba(239,108,0,.18); background: color-mix(in srgb, var(--ball-o) 22%, transparent); border-radius: 999px; padding: 4px; }
 
 .letter-chip {
   height: 42px;
@@ -189,6 +189,7 @@ button, select, input { font-family: inherit; }
 .letter-chip.O { background: var(--ball-o); }
 
 .cell {
+  height: 2.6vh;
   aspect-ratio: 1;
   border-radius: 50%;
   border: 2px solid var(--line);
@@ -199,6 +200,7 @@ button, select, input { font-family: inherit; }
   display: grid;
   place-items: center;
   transition: transform .12s ease, background .15s ease, color .15s ease;
+  font-size: 1.1rem;
   font-size: clamp(0.9rem, 1.7vw, 1.6rem);
 }
 .cell.called {
@@ -273,6 +275,7 @@ button, select, input { font-family: inherit; }
   margin: 0 auto;
 }
 .pattern-cell {
+  height: 2.2vh;
   aspect-ratio: 1;
   min-width: 0;
   border-radius: 6px;
@@ -345,7 +348,10 @@ button, select, input { font-family: inherit; }
 
 .overlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   background: rgba(0,0,0,.45);
   display: none;
   z-index: 30;
@@ -355,6 +361,7 @@ button, select, input { font-family: inherit; }
   position: fixed;
   top: 0;
   right: 0;
+  width: 100%;
   width: min(420px, 100%);
   height: 100%;
   background: var(--bg-2);
@@ -403,7 +410,10 @@ button, select, input { font-family: inherit; }
 
 .modal {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   display: none;
   place-items: center;
   background: rgba(0,0,0,.5);
@@ -415,6 +425,7 @@ button, select, input { font-family: inherit; }
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 22px;
+  width: 92vw;
   width: min(420px, 92vw);
 }
 .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
@@ -456,7 +467,7 @@ button, select, input { font-family: inherit; }
   .layout.classic .bottom-wrap { grid-column: 1; grid-row: 3; }
   .pattern-box { display: none; }
   .board-row { grid-template-columns: 26px repeat(15, minmax(0, 1fr)); gap: 2px; }
-  .cell { font-size: clamp(0.5rem, 1.6vmin, 0.85rem); }
+  .cell { font-size: 0.72rem; font-size: clamp(0.5rem, 1.6vmin, 0.85rem); }
   .letter-chip { height: 20px; font-size: 0.68rem; border-radius: 8px; }
   .ball.current { width: 90px; height: 90px; }
   .ball.current .letter { font-size: 1rem; }
