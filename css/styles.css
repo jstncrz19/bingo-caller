@@ -551,7 +551,10 @@ html, body { touch-action: manipulation; }
   .board-wrap .countdown { height: 7px; flex: 1 1 auto; }
 
   .side-wrap { overflow: hidden; min-height: 0; }
-  .side-wrap > .pattern-box { display: none; }
+  .pattern-box #pattern-menu { display: none; }
+  .pattern-box h3 { font-size: 0.62rem; }
+  .pattern-grid { gap: 3px; width: 62%; margin: 0 auto; }
+  .pattern-grid .pattern-cell { border-radius: 5px; }
   .side-wrap > .call-cluster { flex-direction: column; gap: 8px; }
   .ball.current { width: 64px; height: 64px; }
   .ball.current .letter { font-size: 0.7rem; }
@@ -563,19 +566,6 @@ html, body { touch-action: manipulation; }
   .board-row { grid-template-columns: 22px repeat(15, minmax(0, 1fr)); gap: 2px; }
   .letter-chip { height: 22px; font-size: 0.7rem; border-radius: 6px; }
   .cell { font-size: clamp(0.5rem, 2.6vmin, 1rem); border-width: 2px; }
-
-  .settings-pattern-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 4px;
-    width: 60%;
-    margin: 6px auto;
-  }
-  .settings-pattern-grid .pattern-cell {
-    aspect-ratio: 1;
-    border-radius: 6px;
-    cursor: default;
-  }
 }
 
 @media (min-width: 1280px) and (orientation: landscape) {
