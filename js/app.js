@@ -444,11 +444,18 @@ function toggleTheme() {
 }
 
 function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-  } else {
-    if (document.exitFullscreen) document.exitFullscreen();
-  }
+  var d = document;
+  var el = d.documentElement;
+  var fs = d.fullscreenElement || d.webkitFullscreenElement;
+  var req = el.requestFullscreen || el.webkitRequestFullscreen;
+  var exit = d.exitFullscreen || d.webkitExitFullscreen;
+  try {
+    if (!fs) {
+      if (req) req.call(el);
+    } else {
+      if (exit) exit.call(d);
+    }
+  } catch (e) {}
 }
 
 function bindSettings() {

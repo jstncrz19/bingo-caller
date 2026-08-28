@@ -33,13 +33,16 @@
 
 * { box-sizing: border-box; }
 html { height: 100%; }
+html { height: 100%; }
 body {
   margin: 0;
   font-family: "Nunito", "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
   height: 100vh;
+  height: -webkit-fill-available;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow: hidden;
   display: flex;
   flex-direction: column;

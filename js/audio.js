@@ -3,6 +3,9 @@ const AudioCaller = (function () {
   var unlocked = false;
   var voices = [];
   var audioCtx = null;
+  var cache = {};
+  var preloaded = {};
+  var preloadStarted = false;
 
   try {
     player = new Audio();
@@ -20,6 +23,7 @@ const AudioCaller = (function () {
   function unlock() {
     if (unlocked) return;
     unlocked = true;
+    preloadAll();
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === "suspended") audioCtx.resume();
@@ -51,6 +55,45 @@ const AudioCaller = (function () {
     return voices;
   }
 
+  function getSrc(src) {
+    return cache[src] || src;
+  }
+
+  function loadToCache(src) {
+    if (preloaded[src]) return Promise.resolve(true);
+    preloaded[src] = true;
+    return new Promise(function (resolve) {
+      if (typeof fetch !== "function") { resolve(false); return; }
+      try {
+        fetch(src, { cache: "force-cache" }).then(function (r) {
+          if (!r.ok) throw 0;
+          return r.blob();
+        }).then(function (b) {
+          try { cache[src] = URL.createObjectURL(b); } catch (e) {}
+          resolve(true);
+        }).catch(function () { resolve(false); });
+      } catch (e) { resolve(false); }
+    });
+  }
+
+  function preloadAll() {
+    if (preloadStarted) return;
+    preloadStarted = true;
+    var queue = [];
+    for (var n = 1; n <= 75; n++) queue.push(fileFor(n));
+    queue.push("audio/chimes/ding.wav");
+    queue.push("audio/chimes/bell.wav");
+    queue.push("audio/chimes/pop.wav");
+    queue.push("audio/chimes/blower.wav");
+    var i = 0;
+    function next() {
+      if (i >= queue.length) return;
+      var f = queue[i++];
+      loadToCache(f).then(next);
+    }
+    for (var c = 0; c < 3; c++) next();
+  }
+
   function playFile(src) {
     return new Promise(function (resolve) {
       if (!player || typeof player.play !== "function") {
@@ -66,7 +109,7 @@ const AudioCaller = (function () {
       player.onended = done;
       player.onerror = done;
       try {
-        player.src = src;
+        player.src = getSrc(src);
         var p = player.play();
         if (p && typeof p.then === "function") p.then(function () {}).catch(done);
         else setTimeout(done, 250);
@@ -155,7 +198,10 @@ const AudioCaller = (function () {
 
   function previewVoice(voiceURI) {
     unlock();
-    return speak("B 12, under the B, 12", voiceURI, 1);
+    return playFile(fileFor(12)).then(function () {
+      if (voiceURI && "speechSynthesis" in window) return speak("B 12", voiceURI, 1);
+      return Promise.resolve();
+    });
   }
 
   return {
