@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=1" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -216,8 +216,25 @@
     </div>
   </div>
 
-  <script src="js/patterns.js"></script>
-  <script src="js/audio.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/patterns.js?v=1"></script>
+  <script src="js/audio.js?v=1"></script>
+  <script src="js/app.js?v=1"></script>
+
+  <script>
+    window.APP_VERSION = "1";
+    (function () {
+      function check() {
+        if (window.__bingoActive && window.__bingoActive()) return;
+        fetch("version.json?v=" + Date.now(), { cache: "no-store" })
+          .then(function (r) { return r.json(); })
+          .then(function (d) {
+            if (d.version && d.version !== window.APP_VERSION) location.reload();
+          })
+          .catch(function () {});
+      }
+      setInterval(check, 30000);
+      check();
+    })();
+  </script>
 </body>
 </html>

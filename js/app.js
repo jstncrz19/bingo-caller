@@ -51,7 +51,7 @@ const defaultSettings = {
 
 const state = {
   settings: loadSettings(),
-  gamesPlayed: Number(localStorage.getItem("bingo-games-played") || 0),
+  gamesPlayed: 0,
   called: [],
   remaining: [],
   playing: false,
@@ -61,9 +61,7 @@ const state = {
   needsResetConfirm: false,
 };
 
-function saveGamesPlayed() {
-  localStorage.setItem("bingo-games-played", String(state.gamesPlayed));
-}
+window.__bingoActive = () => state.called.length > 0 || state.playing;
 
 function loadSettings() {
   try {
@@ -299,7 +297,6 @@ async function callNext(fromAuto = false) {
 function startGame() {
   AudioCaller.unlock();
   state.gamesPlayed += 1;
-  saveGamesPlayed();
   state.called = [];
   state.remaining = shuffle(eligibleNumbers());
   callNext(false);
