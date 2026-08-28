@@ -32,14 +32,19 @@
 }
 
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html { height: 100%; }
 body {
   margin: 0;
   font-family: "Nunito", "Segoe UI", sans-serif;
   background: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
+.app-header { flex: 0 0 auto; }
 
 button, select, input { font-family: inherit; }
 
@@ -117,16 +122,16 @@ button, select, input { font-family: inherit; }
   grid-template-rows: auto auto;
   gap: 16px;
   padding: 16px;
-  min-height: calc(100vh - 64px);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 .layout.easy { grid-template-columns: 1fr; }
 .layout.stacked { grid-template-columns: 1fr; }
 .layout.vertical { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
 
 @media (min-width: 641px) and (orientation: landscape) {
-  html, body { overflow: hidden; }
   .layout.classic {
-    height: calc(100dvh - 64px);
     grid-template-rows: minmax(0, 1fr) auto;
     overflow: hidden;
   }
@@ -249,18 +254,20 @@ button, select, input { font-family: inherit; }
 .ball.O { background: radial-gradient(circle at 32% 28%, #ffcc80, var(--ball-o)); color: #fff; }
 
 .stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 4px;
 }
 .stat {
   background: var(--panel);
   border-radius: 10px;
-  padding: 4px;
+  padding: 4px 10px;
   text-align: center;
+  min-width: 56px;
 }
-.stat b { display: block; font-size: 0.85rem; }
-.stat span { color: var(--muted); font-size: 0.58rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+.stat b { display: block; font-size: 0.9rem; }
+.stat span { color: var(--muted); font-size: 0.56rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
 
 .pattern-box { background: var(--panel); border-radius: 12px; padding: 6px; flex: 1 1 auto; }
 .pattern-box h3 { margin: 0 0 4px; font-size: 0.7rem; display: flex; justify-content: space-between; }
@@ -447,20 +454,21 @@ button, select, input { font-family: inherit; }
 .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 18px; }
 
 @media (max-width: 980px) and (orientation: portrait) {
-  html, body { overflow: hidden; }
-  body { height: 100dvh; display: flex; flex-direction: column; }
-  .app-header { flex: 0 0 auto; }
-  .layout { flex: 1 1 auto; min-height: 0; overflow: auto; }
-  .layout.classic { grid-template-columns: 1fr; grid-template-rows: auto auto auto; overflow: auto; }
+  .layout { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+  .layout.classic { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto auto; overflow: hidden; }
   .layout.classic .board-wrap { grid-column: 1; grid-row: 1; }
   .layout.classic .side-wrap { grid-column: 1; grid-row: 2; }
   .layout.classic .bottom-wrap { grid-column: 1; grid-row: 3; }
   .pattern-box { display: none; }
-  .board-row { grid-template-columns: 30px repeat(15, minmax(0, 1fr)); gap: 2px; }
-  .letter-chip { height: 22px; font-size: 0.75rem; }
-  .ball.current { width: 92px; height: 92px; }
+  .board-row { grid-template-columns: 26px repeat(15, minmax(0, 1fr)); gap: 2px; }
+  .cell { font-size: clamp(0.5rem, 1.6vmin, 0.85rem); }
+  .letter-chip { height: 20px; font-size: 0.68rem; border-radius: 8px; }
+  .ball.current { width: 90px; height: 90px; }
   .ball.current .letter { font-size: 1rem; }
-  .ball.current .num { font-size: 2.3rem; }
+  .ball.current .num { font-size: 2.2rem; }
+  .ball.prev { width: 34px; height: 34px; }
+  .ball.prev .letter { font-size: .55rem; }
+  .ball.prev .num { font-size: .85rem; }
 }
 
 @media (min-width: 1280px) and (orientation: landscape) {

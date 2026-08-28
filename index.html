@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=4" />
+  <link rel="stylesheet" href="css/styles.css?v=5" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -47,15 +47,6 @@
         <div id="previous-balls" class="call-cluster"></div>
       </div>
 
-      <div class="stats">
-        <div class="stat" id="stat-total"><span>Total Calls</span><b id="total-calls">0</b></div>
-        <div class="stat" id="stat-game"><span>Games Played</span><b id="game-number-display">0</b></div>
-        <div class="stat" id="stat-current"><span>Current</span><b id="current-call-num">--</b></div>
-        <div class="stat" id="stat-prev"><span>Previous</span><b id="prev-call-num">--</b></div>
-        <div class="stat" id="stat-prize"><span>Prize</span><b id="prize-display">--</b></div>
-        <div class="stat" id="stat-hot"><span>Hot Ball</span><b id="hot-prize">--</b></div>
-      </div>
-
       <div class="pattern-box">
         <h3>
           <span id="pattern-title">Coverall / Blackout</span>
@@ -67,6 +58,15 @@
     </aside>
 
     <section class="bottom-wrap">
+      <div class="stats">
+        <div class="stat" id="stat-total"><span>Total Calls</span><b id="total-calls">0</b></div>
+        <div class="stat" id="stat-game"><span>Games Played</span><b id="game-number-display">0</b></div>
+        <div class="stat" id="stat-current"><span>Current</span><b id="current-call-num">--</b></div>
+        <div class="stat" id="stat-prev"><span>Previous</span><b id="prev-call-num">--</b></div>
+        <div class="stat" id="stat-prize"><span>Prize</span><b id="prize-display">--</b></div>
+        <div class="stat" id="stat-hot"><span>Hot Ball</span><b id="hot-prize">--</b></div>
+      </div>
+
       <div class="bottom-controls">
         <div id="countdown" class="countdown"><span></span></div>
         <div class="controls" id="controls">
@@ -213,12 +213,12 @@
     </div>
   </div>
 
-  <script src="js/patterns.js?v=4"></script>
-  <script src="js/audio.js?v=4"></script>
-  <script src="js/app.js?v=4"></script>
+  <script src="js/patterns.js?v=5"></script>
+  <script src="js/audio.js?v=5"></script>
+  <script src="js/app.js?v=5"></script>
 
   <script>
-    window.APP_VERSION = "4";
+    window.APP_VERSION = "5";
     (function () {
       function check() {
         if (window.__bingoActive && window.__bingoActive()) return;
