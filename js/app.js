@@ -40,7 +40,6 @@ const defaultSettings = {
   showPatternMenu: true,
   lockPattern: false,
   lockPatternInPlay: false,
-  hideFooter: false,
   showLetters: true,
   showGameNumber: true,
   showTotalCalls: true,
@@ -248,7 +247,6 @@ function renderControls() {
   reset.disabled = state.playing || !gameInProgress();
   repeat.disabled = !currentNumber();
   document.getElementById("countdown").hidden = !(state.settings.showCountdown && (state.settings.automaticCalling || state.settings.manualMode));
-  document.getElementById("footer").hidden = state.settings.hideFooter;
 }
 
 function renderLayout() {
@@ -400,7 +398,6 @@ function bindSettings() {
   set("set-pattern-menu", "showPatternMenu");
   set("set-lock-pattern", "lockPattern");
   set("set-lock-play", "lockPatternInPlay");
-  set("set-hide-footer", "hideFooter");
   set("set-show-letters", "showLetters");
   set("set-show-game", "showGameNumber");
   set("set-show-total", "showTotalCalls");

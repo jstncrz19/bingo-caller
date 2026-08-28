@@ -125,14 +125,11 @@ button, select, input { font-family: inherit; }
 
 @media (min-width: 641px) and (orientation: landscape) {
   html, body { overflow: hidden; }
-  body { height: 100vh; display: flex; flex-direction: column; }
-  .app-header { flex: 0 0 auto; }
   .layout.classic {
-    flex: 1 1 auto; min-height: 0; height: auto;
+    height: calc(100dvh - 64px);
     grid-template-rows: minmax(0, 1fr) auto;
     overflow: hidden;
   }
-  .footer { flex: 0 0 auto; }
 }
 .layout.classic .board-wrap { grid-column: 1; grid-row: 1; }
 .layout.classic .side-wrap { grid-column: 2; grid-row: 1; }
@@ -450,16 +447,20 @@ button, select, input { font-family: inherit; }
 .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 18px; }
 
 @media (max-width: 980px) and (orientation: portrait) {
-  .layout, .layout.easy, .layout.stacked { grid-template-columns: 1fr; }
-  .layout.classic { grid-template-rows: auto auto auto; }
+  html, body { overflow: hidden; }
+  body { height: 100dvh; display: flex; flex-direction: column; }
+  .app-header { flex: 0 0 auto; }
+  .layout { flex: 1 1 auto; min-height: 0; overflow: auto; }
+  .layout.classic { grid-template-columns: 1fr; grid-template-rows: auto auto auto; overflow: auto; }
   .layout.classic .board-wrap { grid-column: 1; grid-row: 1; }
   .layout.classic .side-wrap { grid-column: 1; grid-row: 2; }
   .layout.classic .bottom-wrap { grid-column: 1; grid-row: 3; }
-  .board-row { grid-template-columns: 36px repeat(15, minmax(0, 1fr)); gap: 3px; }
-  .letter-chip { height: 28px; font-size: 0.85rem; }
-  .ball.current { width: 120px; height: 120px; }
-  .ball.current .letter { font-size: 1.2rem; }
-  .ball.current .num { font-size: 3rem; }
+  .pattern-box { display: none; }
+  .board-row { grid-template-columns: 30px repeat(15, minmax(0, 1fr)); gap: 2px; }
+  .letter-chip { height: 22px; font-size: 0.75rem; }
+  .ball.current { width: 92px; height: 92px; }
+  .ball.current .letter { font-size: 1rem; }
+  .ball.current .num { font-size: 2.3rem; }
 }
 
 @media (min-width: 1280px) and (orientation: landscape) {

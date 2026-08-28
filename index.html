@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=3" />
+  <link rel="stylesheet" href="css/styles.css?v=4" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -87,8 +87,6 @@
       </div>
     </section>
   </main>
-
-  <p class="footer" id="footer">Independent bingo caller inspired by the hall-style board at letsplaybingo.io. For entertainment only.</p>
 
   <div class="overlay" id="overlay"></div>
   <aside class="settings" id="settings" aria-label="Game settings">
@@ -188,7 +186,6 @@
             <option value="light">Light</option>
           </select>
         </div>
-        <div class="field"><label>Hide footer</label><input id="set-hide-footer" type="checkbox" /></div>
         <div class="field"><label>Show letters on balls</label><input id="set-show-letters" type="checkbox" /></div>
         <div class="field"><label>Show game number</label><input id="set-show-game" type="checkbox" /></div>
         <div class="field"><label>Show total calls</label><input id="set-show-total" type="checkbox" /></div>
@@ -216,12 +213,12 @@
     </div>
   </div>
 
-  <script src="js/patterns.js?v=3"></script>
-  <script src="js/audio.js?v=3"></script>
-  <script src="js/app.js?v=3"></script>
+  <script src="js/patterns.js?v=4"></script>
+  <script src="js/audio.js?v=4"></script>
+  <script src="js/app.js?v=4"></script>
 
   <script>
-    window.APP_VERSION = "3";
+    window.APP_VERSION = "4";
     (function () {
       function check() {
         if (window.__bingoActive && window.__bingoActive()) return;
