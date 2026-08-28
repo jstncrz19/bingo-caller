@@ -307,33 +307,46 @@ function announce(n, isFirst) {
 }
 
 function callNext(fromAuto) {
-  if (fromAuto !== true) fromAuto = false;
-  if (!state.remaining.length) {
-    stopAuto();
-    return;
-  }
-  var n = state.remaining.shift();
-  var isFirst = state.called.length === 0;
-  state.called.unshift(n);
-  if (isFirst) state.firstCallOfGame = n;
-  safeRender();
-  announce(n, isFirst).then(function () {
-    if (state.settings.pauseAfterEnabled && state.called.length >= Number(state.settings.pauseAfter)) {
+  try {
+    if (fromAuto !== true) fromAuto = false;
+    if (!state.remaining.length) {
       stopAuto();
       return;
     }
-    if (fromAuto && state.playing) startCountdownThen(function () { callNext(true); });
-  }).catch(function () {
-    if (fromAuto && state.playing) startCountdownThen(function () { callNext(true); });
-  });
+    var n = state.remaining.shift();
+    var isFirst = state.called.length === 0;
+    state.called.unshift(n);
+    if (isFirst) state.firstCallOfGame = n;
+    safeRender();
+    announce(n, isFirst).then(function () {
+      if (state.settings.pauseAfterEnabled && state.called.length >= Number(state.settings.pauseAfter)) {
+        stopAuto();
+        return;
+      }
+      if (fromAuto && state.playing) startCountdownThen(function () { callNext(true); });
+    }).catch(function (err) {
+      report(err);
+      if (fromAuto && state.playing) startCountdownThen(function () { callNext(true); });
+    });
+  } catch (e) { report(e); }
 }
 
 function startGame() {
-  if (typeof AudioCaller !== "undefined" && AudioCaller.unlock) AudioCaller.unlock();
-  state.gamesPlayed += 1;
-  state.called = [];
-  state.remaining = shuffle(eligibleNumbers());
-  callNext(false);
+  try {
+    if (typeof AudioCaller !== "undefined" && AudioCaller.unlock) AudioCaller.unlock();
+    state.gamesPlayed += 1;
+    state.called = [];
+    state.remaining = shuffle(eligibleNumbers());
+    if (state.remaining.length === 0) throw new Error("remaining is empty - PATTERNS or eligibleNumbers broken");
+    callNext(false);
+  } catch (e) { report(e); }
+}
+
+function report(e) {
+  try {
+    if (window.__dbgD) window.__dbgD("HANDLER ERR: " + e.message);
+    if (typeof console !== "undefined" && console.error) console.error(e);
+  } catch (x) {}
 }
 
 function togglePlay() {

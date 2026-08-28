@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=13" />
+  <link rel="stylesheet" href="css/styles.css?v=14" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -213,12 +213,28 @@
     </div>
   </div>
 
-  <script src="js/patterns.js?v=13"></script>
-  <script src="js/audio.js?v=13"></script>
-  <script src="js/app.js?v=13"></script>
+  <script src="js/patterns.js?v=14"></script>
+  <script src="js/audio.js?v=14"></script>
+  <script src="js/app.js?v=14"></script>
 
   <script>
-    window.APP_VERSION = "13";
+    (function () {
+      var dbg = document.createElement("div");
+      dbg.id = "__dbg__";
+      dbg.style.cssText = "position:fixed;left:0;right:0;bottom:0;max-height:45%;overflow:auto;background:#000;color:#0f0;font:12px monospace;z-index:99999;padding:8px;white-space:pre-wrap;";
+      dbg.style.display = "block";
+      document.body.appendChild(dbg);
+      function D(msg) { try { dbg.textContent = dbg.textContent + "[" + new Date().toISOString().slice(11,19) + "] " + msg + "\n"; } catch (e) {} }
+      window.addEventListener("error", function (e) { D("ERR: " + e.message + " @ " + e.filename + ":" + e.lineno + ":" + e.colno); });
+      window.addEventListener("unhandledrejection", function (e) { D("REJ: " + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
+      setTimeout(function () {
+        D("loaded. startGame=" + (typeof window.startGame) + " callNext=" + (typeof window.callNext) + " AudioCaller=" + (typeof window.AudioCaller) + " PATTERNS=" + (typeof window.PATTERNS) + " toggleTheme=" + (typeof window.toggleTheme));
+      }, 500);
+      window.__dbgD = D;
+    })();
+  </script>
+  <script>
+    window.APP_VERSION = "14";
     (function () {
       function check() {
         if (window.__bingoActive && window.__bingoActive()) return;
