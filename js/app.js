@@ -60,7 +60,9 @@ const state = {
   needsResetConfirm: false,
 };
 
-window.__bingoActive = () => state.called.length > 0 || state.playing;
+window.__bingoActive = function () {
+  return state.called.length > 0 || state.playing;
+};
 
 function loadSettings() {
   try {
@@ -73,27 +75,31 @@ function loadSettings() {
 }
 
 function saveSettings() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings));
+  } catch (e) {}
 }
 
 function activePattern() {
   if (state.settings.patternId === "custom") return state.settings.customPattern;
-  const found = PATTERNS.find((p) => p.id === state.settings.patternId);
+  var found = PATTERNS.find(function (p) { return p.id === state.settings.patternId; });
   return found ? found.grid : emptyPattern();
 }
 
 function eligibleNumbers() {
-  const used = usedColumns(activePattern());
-  const all = Array.from({ length: 75 }, (_, i) => i + 1);
+  var used = usedColumns(activePattern());
+  var all = Array.from({ length: 75 }, function (_, i) { return i + 1; });
   if (!state.settings.skipUnused) return all;
-  return all.filter((n) => used[columnIndexForNumber(n)]);
+  return all.filter(function (n) { return used[columnIndexForNumber(n)]; });
 }
 
 function shuffle(list) {
-  const a = list.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+  var a = list.slice();
+  for (var i = a.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = a[i];
+    a[i] = a[j];
+    a[j] = tmp;
   }
   return a;
 }
@@ -107,29 +113,31 @@ function currentNumber() {
 }
 
 function renderBoard() {
-  const board = document.getElementById("board");
-  const used = usedColumns(activePattern());
+  var board = document.getElementById("board");
+  var used = usedColumns(activePattern());
   board.innerHTML = "";
-  LETTERS.forEach((letter, col) => {
-    const row = document.createElement("div");
-    row.className = `board-row${state.settings.coloredRows ? ` colored-${letter}` : ""}`;
-    const chip = document.createElement("div");
-    chip.className = `letter-chip ${letter}`;
+  LETTERS.forEach(function (letter, col) {
+    var row = document.createElement("div");
+    row.className = "board-row" + (state.settings.coloredRows ? " colored-" + letter : "");
+    var chip = document.createElement("div");
+    chip.className = "letter-chip " + letter;
     chip.textContent = state.settings.showLetters ? letter : "";
     row.appendChild(chip);
-    for (let n = col * 15 + 1; n <= col * 15 + 15; n++) {
-      const cell = document.createElement("button");
-      const called = state.called.includes(n);
-      const unused = state.settings.skipUnused && !used[col];
-      cell.className = `cell ${letter}`;
+    for (var n = col * 15 + 1; n <= col * 15 + 15; n++) {
+      var cell = document.createElement("button");
+      var called = state.called.indexOf(n) !== -1;
+      var unused = state.settings.skipUnused && !used[col];
+      cell.className = "cell " + letter;
       if (called) cell.classList.add("called");
       if (unused && state.settings.hideUnusedOnBoard) cell.classList.add("unused");
       if (state.settings.hotBall && n === Number(state.settings.hotBallNumber)) cell.classList.add("hot");
       if (state.settings.manualMode) cell.classList.add("manual");
       cell.textContent = n;
-      cell.dataset.n = n;
+      cell.setAttribute("data-n", n);
       if (state.settings.manualMode) {
-        cell.addEventListener("click", () => toggleManual(n));
+        cell.addEventListener("click", (function (num) {
+          return function () { toggleManual(num); };
+        })(n));
       }
       row.appendChild(cell);
     }
@@ -138,188 +146,233 @@ function renderBoard() {
 }
 
 function renderBall(el, n, sizeClass) {
-  el.className = `ball ${sizeClass}`;
+  var html = "";
+  el.className = "ball " + sizeClass;
   if (!n) {
     el.classList.add("placeholder");
-    el.innerHTML = `<div class="letter">--</div><div class="num">?</div>`;
+    el.innerHTML = '<div class="letter">--</div><div class="num">?</div>';
     return;
   }
-  const letter = letterForNumber(n);
+  var letter = letterForNumber(n);
   el.classList.add(letter);
-  el.innerHTML = `${state.settings.showLetters ? `<div class="letter">${letter}</div>` : ""}<div class="num">${n}</div>`;
+  html = state.settings.showLetters ? '<div class="letter">' + letter + "</div>" : "";
+  html += '<div class="num">' + n + "</div>";
+  el.innerHTML = html;
 }
 
 function renderCalls() {
-  const current = document.getElementById("current-ball");
-  const prevWrap = document.getElementById("previous-balls");
+  var current = document.getElementById("current-ball");
+  var prevWrap = document.getElementById("previous-balls");
   current.style.display = state.settings.showCurrentCall ? "grid" : "none";
   renderBall(current, currentNumber(), "current");
   prevWrap.innerHTML = "";
   prevWrap.style.display = state.settings.showPreviousCalls ? "flex" : "none";
-  const prev = state.called.slice(1, 1 + Number(state.settings.previousCount));
-  prev.forEach((n) => {
-    const el = document.createElement("div");
+  var prev = state.called.slice(1, 1 + Number(state.settings.previousCount));
+  prev.forEach(function (n) {
+    var el = document.createElement("div");
     renderBall(el, n, "prev");
     prevWrap.appendChild(el);
   });
-  document.getElementById("total-calls").textContent = state.called.length;
-  document.getElementById("current-call-num").textContent = currentNumber()
-    ? `${letterForNumber(currentNumber())}${currentNumber()}`
-    : "--";
-  document.getElementById("prev-call-num").textContent = state.called[1]
-    ? `${letterForNumber(state.called[1])}${state.called[1]}`
-    : "--";
-  document.getElementById("game-number-display").textContent = String(state.gamesPlayed || 0);
-  document.getElementById("prize-display").textContent = state.settings.prize || "--";
-  document.getElementById("hot-prize").textContent = state.settings.hotBall
-    ? `${state.settings.hotBallTitle}${state.settings.hotBallPrize ? ": " + state.settings.hotBallPrize : ""}`
-    : "--";
+  setText("total-calls", state.called.length);
+  setText("current-call-num", currentNumber() ? letterForNumber(currentNumber()) + currentNumber() : "--");
+  setText("prev-call-num", state.called[1] ? letterForNumber(state.called[1]) + state.called[1] : "--");
+  setText("game-number-display", String(state.gamesPlayed || 0));
+  setText("prize-display", state.settings.prize || "--");
+  setText("hot-prize", state.settings.hotBall
+    ? state.settings.hotBallTitle + (state.settings.hotBallPrize ? ": " + state.settings.hotBallPrize : "")
+    : "--");
 
-  document.getElementById("stat-game").hidden = !state.settings.showGameNumber;
-  document.getElementById("stat-total").hidden = !state.settings.showTotalCalls;
-  document.getElementById("stat-current").hidden = !state.settings.showCurrentCallNumber;
-  document.getElementById("stat-prev").hidden = !state.settings.showPreviousCallNumber;
-  document.getElementById("stat-prize").hidden = !state.settings.prize;
-  document.getElementById("stat-hot").hidden = !state.settings.hotBall;
+  var statGame = document.getElementById("stat-game");
+  var statTotal = document.getElementById("stat-total");
+  var statCurrent = document.getElementById("stat-current");
+  var statPrev = document.getElementById("stat-prev");
+  var statPrize = document.getElementById("stat-prize");
+  var statHot = document.getElementById("stat-hot");
+  if (statGame) statGame.hidden = !state.settings.showGameNumber;
+  if (statTotal) statTotal.hidden = !state.settings.showTotalCalls;
+  if (statCurrent) statCurrent.hidden = !state.settings.showCurrentCallNumber;
+  if (statPrev) statPrev.hidden = !state.settings.showPreviousCallNumber;
+  if (statPrize) statPrize.hidden = !state.settings.prize;
+  if (statHot) statHot.hidden = !state.settings.hotBall;
 
-  const hist = document.getElementById("history-list");
-  hist.innerHTML = state.called
-    .slice()
-    .reverse()
-    .map((n) => `<span class="history-chip ${letterForNumber(n)}">${letterForNumber(n)}${n}</span>`)
-    .join("");
+  var hist = document.getElementById("history-list");
+  var chips = "";
+  state.called.slice().reverse().forEach(function (n) {
+    chips += '<span class="history-chip ' + letterForNumber(n) + '">' + letterForNumber(n) + n + "</span>";
+  });
+  hist.innerHTML = chips;
+}
+
+function setText(id, value) {
+  var el = document.getElementById(id);
+  if (el) el.textContent = value;
 }
 
 function renderPattern() {
-  const gridEl = document.getElementById("pattern-grid");
-  const title = document.getElementById("pattern-title");
-  const menu = document.getElementById("pattern-menu");
-  const skip = document.getElementById("skip-pill");
-  const pattern = PATTERNS.find((p) => p.id === state.settings.patternId);
-  title.textContent = state.settings.showPatternTitle ? (pattern ? pattern.name : "Custom") : "Pattern";
-  skip.classList.toggle("show", state.settings.skipUnused && state.settings.showSkipIndicator);
-  menu.hidden = !state.settings.showPatternMenu;
-  if (menu.dataset.ready !== "1") {
-    menu.innerHTML = PATTERNS.map((p) => `<option value="${p.id}">${p.name}</option>`).join("");
-    menu.dataset.ready = "1";
+  var gridEl = document.getElementById("pattern-grid");
+  var title = document.getElementById("pattern-title");
+  var menu = document.getElementById("pattern-menu");
+  var skip = document.getElementById("skip-pill");
+  var pattern = PATTERNS.find(function (p) { return p.id === state.settings.patternId; });
+  setTimeout(function () {
+    if (title) title.textContent = state.settings.showPatternTitle ? (pattern ? pattern.name : "Custom") : "Pattern";
+    if (skip) skip.classList.toggle("show", state.settings.skipUnused && state.settings.showSkipIndicator);
+    if (menu) menu.hidden = !state.settings.showPatternMenu;
+  }, 0);
+  if (menu && menu.getAttribute("data-ready") !== "1") {
+    var opts = "";
+    PATTERNS.forEach(function (p) { opts += '<option value="' + p.id + '">' + p.name + "</option>"; });
+    menu.innerHTML = opts;
+    menu.setAttribute("data-ready", "1");
   }
-  menu.value = state.settings.patternId;
-  const grid = activePattern();
+  if (menu) menu.value = state.settings.patternId;
+  var grid = activePattern();
   gridEl.innerHTML = "";
-  for (let r = 0; r < 5; r++) {
-    for (let c = 0; c < 5; c++) {
-      const cell = document.createElement("button");
-      cell.className = "pattern-cell" + (grid[r][c] ? " on" : "") + (r === 2 && c === 2 ? " free" : "");
-      cell.addEventListener("click", () => {
-        if (state.settings.lockPattern) return;
-        if (state.settings.lockPatternInPlay && gameInProgress()) return;
-        const next = clonePattern(activePattern());
-        next[r][c] = !next[r][c];
-        state.settings.patternId = "custom";
-        state.settings.customPattern = next;
-        saveSettings();
-        renderPattern();
-        renderBoard();
-      });
-      gridEl.appendChild(cell);
+  for (var r = 0; r < 5; r++) {
+    for (var c = 0; c < 5; c++) {
+      (function (rr, cc) {
+        var cell = document.createElement("button");
+        cell.className = "pattern-cell" + (grid[rr][cc] ? " on" : "") + (rr === 2 && cc === 2 ? " free" : "");
+        cell.addEventListener("click", function () {
+          if (state.settings.lockPattern) return;
+          if (state.settings.lockPatternInPlay && gameInProgress()) return;
+          var next = clonePattern(activePattern());
+          next[rr][cc] = !next[rr][cc];
+          state.settings.patternId = "custom";
+          state.settings.customPattern = next;
+          saveSettings();
+          renderPattern();
+          renderBoard();
+        });
+        gridEl.appendChild(cell);
+      })(r, c);
     }
   }
 }
 
 function renderControls() {
-  const start = document.getElementById("btn-start");
-  const next = document.getElementById("btn-next");
-  const play = document.getElementById("btn-play");
-  const reset = document.getElementById("btn-reset");
-  const repeat = document.getElementById("btn-repeat");
-  const shuffleBtn = document.getElementById("btn-shuffle");
-  const controls = document.getElementById("controls");
+  var start = document.getElementById("btn-start");
+  var next = document.getElementById("btn-next");
+  var play = document.getElementById("btn-play");
+  var reset = document.getElementById("btn-reset");
+  var repeat = document.getElementById("btn-repeat");
+  var shuffleBtn = document.getElementById("btn-shuffle");
+  var controls = document.getElementById("controls");
+  if (!controls) return;
   controls.hidden = state.settings.hideControls;
   controls.classList.toggle("stoplight", state.settings.stoplight);
-  shuffleBtn.hidden = state.settings.hideShuffle;
-  play.hidden = !state.settings.automaticCalling || state.settings.manualMode;
-  start.hidden = gameInProgress() || state.settings.manualMode;
-  next.hidden = !gameInProgress() || state.settings.manualMode;
-  next.disabled = state.playing || state.remaining.length === 0;
-  play.disabled = !gameInProgress() || state.remaining.length === 0;
-  play.textContent = state.playing ? "Pause" : "Play";
-  play.className = `btn ${state.playing ? "btn-pause" : "btn-play"}`;
-  reset.disabled = state.playing || !gameInProgress();
-  repeat.disabled = !currentNumber();
-  document.getElementById("countdown").hidden = !(state.settings.showCountdown && (state.settings.automaticCalling || state.settings.manualMode));
+  if (shuffleBtn) shuffleBtn.hidden = state.settings.hideShuffle;
+  if (play) play.hidden = !state.settings.automaticCalling || state.settings.manualMode;
+  if (start) start.hidden = gameInProgress() || state.settings.manualMode;
+  if (next) next.hidden = !gameInProgress() || state.settings.manualMode;
+  if (next) next.disabled = state.playing || state.remaining.length === 0;
+  if (play) play.disabled = !gameInProgress() || state.remaining.length === 0;
+  if (play) {
+    play.textContent = state.playing ? "Pause" : "Play";
+    play.className = "btn " + (state.playing ? "btn-pause" : "btn-play");
+  }
+  if (reset) reset.disabled = state.playing || !gameInProgress();
+  if (repeat) repeat.disabled = !currentNumber();
+  var cd = document.getElementById("countdown");
+  if (cd) cd.hidden = !(state.settings.showCountdown && (state.settings.automaticCalling || state.settings.manualMode));
 }
 
 function renderLayout() {
-  document.body.dataset.theme = state.settings.theme;
-  const layout = document.getElementById("layout");
-  layout.className = `layout ${state.settings.layout}`;
+  document.body.setAttribute("data-theme", state.settings.theme);
+  var layout = document.getElementById("layout");
+  if (layout) layout.className = "layout " + state.settings.layout;
+}
+
+function safeRender() {
+  try { renderLayout(); } catch (e) {}
+  try { renderBoard(); } catch (e) {}
+  try { renderCalls(); } catch (e) {}
+  try { renderPattern(); } catch (e) {}
+  try { renderControls(); } catch (e) {}
 }
 
 function renderAll() {
-  renderLayout();
-  renderBoard();
-  renderCalls();
-  renderPattern();
-  renderControls();
+  safeRender();
 }
 
-async function announce(n, isFirst) {
-  const s = state.settings;
+function announce(n, isFirst) {
+  var s = state.settings;
+  var settingsParam = Object.assign({}, s, { firstCall: isFirst ? n : null });
   if (s.playChime && s.automaticCalling) {
-    await AudioCaller.playChime(s.chime);
+    return AudioCaller.playChime(s.chime).then(function () {
+      return AudioCaller.callNumber(n, settingsParam);
+    });
   }
-  await AudioCaller.callNumber(n, Object.assign({}, s, {
-    firstCall: isFirst ? n : null,
-  }));
+  return AudioCaller.callNumber(n, settingsParam);
 }
 
-async function callNext(fromAuto = false) {
+function callNext(fromAuto) {
+  if (fromAuto !== true) fromAuto = false;
   if (!state.remaining.length) {
     stopAuto();
     return;
   }
-  const n = state.remaining.shift();
-  const isFirst = state.called.length === 0;
+  var n = state.remaining.shift();
+  var isFirst = state.called.length === 0;
   state.called.unshift(n);
   if (isFirst) state.firstCallOfGame = n;
-  renderAll();
-  await announce(n, isFirst);
-  if (state.settings.pauseAfterEnabled && state.called.length >= Number(state.settings.pauseAfter)) {
-    stopAuto();
-    return;
-  }
-  if (fromAuto && state.playing) startCountdownThen(callNext.bind(null, true));
+  safeRender();
+  announce(n, isFirst).then(function () {
+    if (state.settings.pauseAfterEnabled && state.called.length >= Number(state.settings.pauseAfter)) {
+      stopAuto();
+      return;
+    }
+    if (fromAuto && state.playing) startCountdownThen(function () { callNext(true); });
+  }).catch(function () {
+    if (fromAuto && state.playing) startCountdownThen(function () { callNext(true); });
+  });
 }
 
 function startGame() {
-  AudioCaller.unlock();
+  if (typeof AudioCaller !== "undefined" && AudioCaller.unlock) AudioCaller.unlock();
   state.gamesPlayed += 1;
   state.called = [];
   state.remaining = shuffle(eligibleNumbers());
   callNext(false);
 }
 
+function togglePlay() {
+  if (!gameInProgress() || !state.settings.automaticCalling) return;
+  if (state.playing) stopAuto();
+  else startAuto();
+}
+
 function toggleManual(n) {
-  if (state.called.includes(n)) {
-    state.called = state.called.filter((x) => x !== n);
+  if (state.called.indexOf(n) !== -1) {
+    state.called = state.called.filter(function (x) { return x !== n; });
   } else {
     state.called.unshift(n);
     announce(n, state.called.length === 1);
   }
-  renderAll();
+  safeRender();
+}
+
+function repeatNumber() {
+  if (currentNumber()) {
+    if (typeof AudioCaller !== "undefined") announce(currentNumber(), false);
+  }
+}
+
+function playShuffleSound() {
+  if (typeof AudioCaller !== "undefined") AudioCaller.playShuffle();
 }
 
 function startCountdownThen(fn) {
-  clearInterval(state.countdownTimer);
-  const bar = document.querySelector("#countdown span");
-  const total = Number(state.settings.timeBetweenCalls) * 1000;
-  const start = Date.now();
-  bar.style.width = "0%";
-  state.countdownTimer = setInterval(() => {
-    const pct = Math.min(100, ((Date.now() - start) / total) * 100);
-    bar.style.width = pct + "%";
+  if (state.countdownTimer) clearInterval(state.countdownTimer);
+  var bar = document.querySelector("#countdown span");
+  var total = Number(state.settings.timeBetweenCalls) * 1000;
+  var start = Date.now();
+  if (bar) bar.style.width = "0%";
+  state.countdownTimer = setInterval(function () {
+    var pct = Math.min(100, ((Date.now() - start) / total) * 100);
+    if (bar) bar.style.width = pct + "%";
     if (pct >= 100) {
-      clearInterval(state.countdownTimer);
+      if (state.countdownTimer) clearInterval(state.countdownTimer);
       fn();
     }
   }, 50);
@@ -329,13 +382,14 @@ function startAuto() {
   if (!gameInProgress() || !state.remaining.length) return;
   state.playing = true;
   renderControls();
-  startCountdownThen(() => callNext(true));
+  startCountdownThen(function () { callNext(true); });
 }
 
 function stopAuto() {
   state.playing = false;
-  clearInterval(state.countdownTimer);
-  document.querySelector("#countdown span").style.width = "0%";
+  if (state.countdownTimer) clearInterval(state.countdownTimer);
+  var bar = document.querySelector("#countdown span");
+  if (bar) bar.style.width = "0%";
   renderControls();
 }
 
@@ -343,21 +397,59 @@ function resetBoard() {
   stopAuto();
   state.called = [];
   state.remaining = [];
-  renderAll();
+  safeRender();
+}
+
+function showResetModal() {
+  var m = document.getElementById("reset-modal");
+  if (m) m.classList.add("open");
+}
+
+function hideResetModal() {
+  var m = document.getElementById("reset-modal");
+  if (m) m.classList.remove("open");
+}
+
+function confirmReset() {
+  hideResetModal();
+  resetBoard();
+}
+
+function openSettings() {
+  var s = document.getElementById("settings");
+  var o = document.getElementById("overlay");
+  if (s) s.classList.add("open");
+  if (o) o.classList.add("open");
+}
+
+function toggleTheme() {
+  state.settings.theme = state.settings.theme === "dark" ? "light" : "dark";
+  saveSettings();
+  renderLayout();
+  var sel = document.getElementById("set-theme");
+  if (sel) sel.value = state.settings.theme;
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  } else {
+    if (document.exitFullscreen) document.exitFullscreen();
+  }
 }
 
 function bindSettings() {
-  const s = state.settings;
-  const set = (id, prop, transform = (v) => v) => {
-    const el = document.getElementById(id);
+  var s = state.settings;
+  var set = function (id, prop, transform) {
+    var el = document.getElementById(id);
     if (!el) return;
     if (el.type === "checkbox") el.checked = !!s[prop];
     else el.value = s[prop];
-    el.addEventListener("change", () => {
-      s[prop] = el.type === "checkbox" ? el.checked : transform(el.value);
+    el.addEventListener("change", function () {
+      s[prop] = el.type === "checkbox" ? el.checked : (transform ? transform(el.value) : el.value);
       saveSettings();
       if (prop === "patternId") renderPattern();
-      renderAll();
+      safeRender();
     });
   };
   set("set-theme", "theme");
@@ -406,25 +498,35 @@ function bindSettings() {
 }
 
 function populateVoices() {
-  const select = document.getElementById("set-voice");
-  const voices = AudioCaller.getVoices();
-  select.innerHTML = voices.length
-    ? voices.map((v) => `<option value="${v.voiceURI}">${v.name} (${v.lang})</option>`).join("")
-    : `<option value="">Default device voice</option>`;
-  if (state.settings.voiceURI) select.value = state.settings.voiceURI;
+  try {
+    var select = document.getElementById("set-voice");
+    var voices = typeof AudioCaller !== "undefined" && AudioCaller.getVoices ? AudioCaller.getVoices() : [];
+    if (voices.length) {
+      var options = "";
+      voices.forEach(function (v) {
+        options += '<option value="' + v.voiceURI + '">' + v.name + " (" + v.lang + ")</option>";
+      });
+      select.innerHTML = options;
+    } else {
+      select.innerHTML = "<option value=\"\">Default device voice</option>";
+    }
+    if (state.settings.voiceURI) select.value = state.settings.voiceURI;
+  } catch (e) {}
 }
 
 function exportSettings() {
-  const blob = new Blob([JSON.stringify(state.settings, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "bingo-caller-settings.json";
-  a.click();
+  try {
+    var blob = new Blob([JSON.stringify(state.settings, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "bingo-caller-settings.json";
+    a.click();
+  } catch (e) {}
 }
 
 function importSettings(file) {
-  const reader = new FileReader();
-  reader.onload = () => {
+  var reader = new FileReader();
+  reader.onload = function () {
     try {
       state.settings = Object.assign({}, defaultSettings, JSON.parse(reader.result));
       saveSettings();
@@ -436,114 +538,121 @@ function importSettings(file) {
   reader.readAsText(file);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const patternSelect = document.getElementById("set-pattern");
-  patternSelect.innerHTML = PATTERNS.map((p) => `<option value="${p.id}">${p.name}</option>`).join("");
+function closeSettings() {
+  var s = document.getElementById("settings");
+  var o = document.getElementById("overlay");
+  if (s) s.classList.remove("open");
+  if (o) o.classList.remove("open");
+  saveSettings();
+}
+
+function bindNonCore() {
+  var overlay = document.getElementById("overlay");
+  if (overlay && !overlay.getAttribute("data-bound")) {
+    overlay.addEventListener("click", closeSettings);
+    overlay.setAttribute("data-bound", "1");
+  }
+
+  var patternSelect = document.getElementById("set-pattern");
+  if (patternSelect) {
+    var opts = "";
+    PATTERNS.forEach(function (p) { opts += '<option value="' + p.id + '">' + p.name + "</option>"; });
+    patternSelect.innerHTML = opts;
+  }
   bindSettings();
   populateVoices();
   if ("speechSynthesis" in window) {
-    speechSynthesis.addEventListener("voiceschanged", populateVoices);
+    try {
+      speechSynthesis.addEventListener("voiceschanged", populateVoices);
+    } catch (e) {}
   }
-  renderAll();
 
-  document.getElementById("btn-start").addEventListener("click", startGame);
-  document.getElementById("btn-next").addEventListener("click", () => callNext(false));
-  document.getElementById("btn-play").addEventListener("click", () => {
-    if (state.playing) stopAuto();
-    else startAuto();
-  });
-  document.getElementById("btn-repeat").addEventListener("click", () => {
-    if (currentNumber()) announce(currentNumber(), false);
-  });
-  document.getElementById("btn-shuffle").addEventListener("click", () => AudioCaller.playShuffle());
-  document.getElementById("btn-reset").addEventListener("click", () => {
-    document.getElementById("reset-modal").classList.add("open");
-  });
-  document.getElementById("confirm-reset").addEventListener("click", () => {
-    document.getElementById("reset-modal").classList.remove("open");
-    resetBoard();
-  });
-  document.getElementById("cancel-reset").addEventListener("click", () => {
-    document.getElementById("reset-modal").classList.remove("open");
-  });
-
-  document.getElementById("btn-settings").addEventListener("click", () => {
-    document.getElementById("settings").classList.add("open");
-    document.getElementById("overlay").classList.add("open");
-  });
-  document.getElementById("btn-close-settings").addEventListener("click", closeSettings);
-  document.getElementById("overlay").addEventListener("click", closeSettings);
-
-  document.getElementById("btn-theme").addEventListener("click", () => {
-    state.settings.theme = state.settings.theme === "dark" ? "light" : "dark";
-    saveSettings();
-    renderLayout();
-    document.getElementById("set-theme").value = state.settings.theme;
-  });
-  document.getElementById("btn-fs").addEventListener("click", () => {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
-  });
-  document.getElementById("pattern-menu").addEventListener("change", (e) => {
-    state.settings.patternId = e.target.value;
-    saveSettings();
-    renderPattern();
-    renderBoard();
-  });
-  document.getElementById("preview-voice").addEventListener("click", () => {
-    AudioCaller.previewVoice(state.settings.voiceURI);
-  });
-  document.getElementById("export-settings").addEventListener("click", exportSettings);
-  document.getElementById("import-settings").addEventListener("change", (e) => {
-    if (e.target.files[0]) importSettings(e.target.files[0]);
-  });
-
-  document.body.addEventListener("click", () => AudioCaller.unlock(), { once: true });
-
-  document.getElementById("set-manual").addEventListener("change", () => {
-    if (state.settings.manualMode) {
-      state.settings.automaticCalling = false;
-      document.getElementById("set-auto").checked = false;
-      stopAuto();
+  var patternMenu = document.getElementById("pattern-menu");
+  if (patternMenu && !patternMenu.getAttribute("data-bound")) {
+    patternMenu.addEventListener("change", function (e) {
+      state.settings.patternId = e.target.value;
       saveSettings();
-      renderControls();
-    }
-  });
-  document.getElementById("set-auto").addEventListener("change", () => {
-    if (state.settings.automaticCalling) {
-      state.settings.manualMode = false;
-      document.getElementById("set-manual").checked = false;
-      saveSettings();
-      renderControls();
-    }
-  });
+      renderPattern();
+      renderBoard();
+    });
+    patternMenu.setAttribute("data-bound", "1");
+  }
+  var preview = document.getElementById("preview-voice");
+  if (preview && !preview.getAttribute("data-bound")) {
+    preview.addEventListener("click", function () {
+      if (typeof AudioCaller !== "undefined") AudioCaller.previewVoice(state.settings.voiceURI);
+    });
+    preview.setAttribute("data-bound", "1");
+  }
+  var exportBtn = document.getElementById("export-settings");
+  if (exportBtn && !exportBtn.getAttribute("data-bound")) {
+    exportBtn.addEventListener("click", exportSettings);
+    exportBtn.setAttribute("data-bound", "1");
+  }
+  var importInp = document.getElementById("import-settings");
+  if (importInp && !importInp.getAttribute("data-bound")) {
+    importInp.addEventListener("change", function (e) {
+      if (e.target.files[0]) importSettings(e.target.files[0]);
+    });
+    importInp.setAttribute("data-bound", "1");
+  }
 
-  window.addEventListener("keydown", (e) => {
+  var manualInput = document.getElementById("set-manual");
+  if (manualInput && !manualInput.getAttribute("data-bound2")) {
+    manualInput.addEventListener("change", function () {
+      if (state.settings.manualMode) {
+        state.settings.automaticCalling = false;
+        var auto = document.getElementById("set-auto");
+        if (auto) auto.checked = false;
+        stopAuto();
+        saveSettings();
+        renderControls();
+      }
+    });
+    manualInput.setAttribute("data-bound2", "1");
+  }
+  var autoInput = document.getElementById("set-auto");
+  if (autoInput && !autoInput.getAttribute("data-bound2")) {
+    autoInput.addEventListener("change", function () {
+      if (state.settings.automaticCalling) {
+        state.settings.manualMode = false;
+        var manual = document.getElementById("set-manual");
+        if (manual) manual.checked = false;
+        saveSettings();
+        renderControls();
+      }
+    });
+    autoInput.setAttribute("data-bound2", "1");
+  }
+
+  window.addEventListener("keydown", function (e) {
     if (!state.settings.keyboard) return;
-    if (["INPUT", "SELECT", "TEXTAREA"].includes(e.target.tagName)) return;
+    if (["INPUT", "SELECT", "TEXTAREA"].indexOf(e.target.tagName) !== -1) return;
     if (e.code === "Space" || e.code === "PageUp") {
       e.preventDefault();
-      if (!state.settings.automaticCalling) return;
-      if (state.playing) stopAuto();
-      else startAuto();
+      if (state.settings.automaticCalling) togglePlay();
     }
     if (e.code === "ArrowRight" || e.code === "PageDown") {
       e.preventDefault();
       if (!gameInProgress()) startGame();
       else if (!state.playing) callNext(false);
     }
-    if (e.key.toLowerCase() === "r") {
-      document.getElementById("reset-modal").classList.add("open");
+    if ((e.key || "").toLowerCase() === "r") {
+      showResetModal();
     }
-    if (e.key === "Enter" && document.getElementById("reset-modal").classList.contains("open")) {
-      resetBoard();
-      document.getElementById("reset-modal").classList.remove("open");
+    if (e.key === "Enter" && document.getElementById("reset-modal")) {
+      if (document.getElementById("reset-modal").classList.contains("open")) {
+        resetBoard();
+        hideResetModal();
+      }
     }
   });
-});
-
-function closeSettings() {
-  document.getElementById("settings").classList.remove("open");
-  document.getElementById("overlay").classList.remove("open");
-  saveSettings();
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  try { bindNonCore(); } catch (e) {}
+  try { safeRender(); } catch (e) {}
+  document.body.addEventListener("click", function () {
+    if (typeof AudioCaller !== "undefined" && AudioCaller.unlock) AudioCaller.unlock();
+  }, { once: true });
+});

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/styles.css?v=11" />
+  <link rel="stylesheet" href="css/styles.css?v=13" />
 </head>
 <body data-theme="dark">
   <header class="app-header">
@@ -23,13 +23,13 @@
     <div class="header-actions">
       <a class="nav-link" href="cards.html">Card Generator</a>
       <div class="icon-btn-row">
-        <button class="icon-btn" id="btn-fs" title="Full screen" aria-label="Full screen">
+        <button class="icon-btn" id="btn-fs" title="Full screen" aria-label="Full screen" onclick="toggleFullscreen()">
           <svg viewBox="0 0 24 24"><path d="M7 3H3v4h2V5h2V3zm14 4h-2V5h-2V3h4v4zM5 17H3v4h4v-2H5v-2zm16 0h-2v2h-2v2h4v-4z"/></svg>
         </button>
-        <button class="icon-btn" id="btn-theme" title="Light / dark mode" aria-label="Toggle theme">
+        <button class="icon-btn" id="btn-theme" title="Light / dark mode" aria-label="Toggle theme" onclick="toggleTheme()">
           <svg viewBox="0 0 24 24"><path d="M12 4a8 8 0 108 8 6.5 6.5 0 01-8-8z"/></svg>
         </button>
-        <button class="icon-btn" id="btn-settings" title="Game settings" aria-label="Settings">
+        <button class="icon-btn" id="btn-settings" title="Game settings" aria-label="Settings" onclick="openSettings()">
           <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.5 7.5 0 000-1.88l2.03-1.58-1.92-3.32-2.39.96a7.4 7.4 0 00-1.63-.94L14.5 3h-5l-.73 2.18c-.58.22-1.12.54-1.63.94l-2.39-.96L2.83 8.48l2.03 1.58a7.5 7.5 0 000 1.88L2.83 13.52l1.92 3.32 2.39-.96c.5.4 1.05.72 1.63.94L9.5 21h5l.73-2.18c.58-.22 1.12-.54 1.63-.94l2.39.96 1.92-3.32-2.03-1.58zM12 15.5A3.5 3.5 0 1115.5 12 3.5 3.5 0 0112 15.5z"/></svg>
         </button>
       </div>
@@ -70,12 +70,12 @@
       <div class="bottom-controls">
         <div id="countdown" class="countdown"><span></span></div>
         <div class="controls" id="controls">
-          <button class="btn btn-start" id="btn-start">Start Game</button>
-          <button class="btn btn-next" id="btn-next" hidden>Call Next Number</button>
-          <button class="btn btn-play" id="btn-play">Play</button>
-          <button class="btn btn-repeat" id="btn-repeat">Repeat Number</button>
-          <button class="btn btn-shuffle" id="btn-shuffle">Shuffle / Blower</button>
-          <button class="btn btn-reset" id="btn-reset">Reset Board</button>
+          <button class="btn btn-start" id="btn-start" onclick="startGame()">Start Game</button>
+          <button class="btn btn-next" id="btn-next" hidden onclick="callNext(false)">Call Next Number</button>
+          <button class="btn btn-play" id="btn-play" onclick="togglePlay()">Play</button>
+          <button class="btn btn-repeat" id="btn-repeat" onclick="repeatNumber()">Repeat Number</button>
+          <button class="btn btn-shuffle" id="btn-shuffle" onclick="playShuffleSound()">Shuffle / Blower</button>
+          <button class="btn btn-reset" id="btn-reset" onclick="showResetModal()">Reset Board</button>
         </div>
       </div>
 
@@ -92,7 +92,7 @@
   <aside class="settings" id="settings" aria-label="Game settings">
     <header>
       <strong>Game Settings</strong>
-      <button class="icon-btn" id="btn-close-settings" aria-label="Close settings">✕</button>
+      <button class="icon-btn" id="btn-close-settings" aria-label="Close settings" onclick="closeSettings()">✕</button>
     </header>
     <div class="settings-body">
       <div class="settings-group">
@@ -207,18 +207,18 @@
       <h3>Reset the board?</h3>
       <p>This clears the current game and call history. Settings are kept.</p>
       <div class="modal-actions">
-        <button class="btn btn-reset" id="cancel-reset">Cancel</button>
-        <button class="btn btn-start" id="confirm-reset">Reset Board</button>
+        <button class="btn btn-reset" id="cancel-reset" onclick="hideResetModal()">Cancel</button>
+        <button class="btn btn-start" id="confirm-reset" onclick="confirmReset()">Reset Board</button>
       </div>
     </div>
   </div>
 
-  <script src="js/patterns.js?v=11"></script>
-  <script src="js/audio.js?v=11"></script>
-  <script src="js/app.js?v=11"></script>
+  <script src="js/patterns.js?v=13"></script>
+  <script src="js/audio.js?v=13"></script>
+  <script src="js/app.js?v=13"></script>
 
   <script>
-    window.APP_VERSION = "11";
+    window.APP_VERSION = "13";
     (function () {
       function check() {
         if (window.__bingoActive && window.__bingoActive()) return;
