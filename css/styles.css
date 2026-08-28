@@ -271,23 +271,19 @@ button, select, input { font-family: inherit; }
 .stat b { display: block; font-size: 0.9rem; }
 .stat span { color: var(--muted); font-size: 0.56rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
 
-.pattern-box { background: var(--panel); border-radius: 12px; padding: 6px; flex: 1 1 auto; }
+.pattern-box { background: var(--panel); border-radius: 12px; padding: 6px; flex: 1 1 auto; overflow: hidden; }
 .pattern-box h3 { margin: 0 0 4px; font-size: 0.7rem; display: flex; justify-content: space-between; }
 .pattern-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(5, 1fr);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 3px;
-  width: auto;
+  width: min(100%, calc(100dvh * 0.42));
   max-width: 100%;
-  align-self: center;
-  aspect-ratio: 1 / 1;
-  flex: 1 1 auto;
-  min-height: 0;
   margin: 0 auto;
 }
 .pattern-cell {
   aspect-ratio: 1;
+  min-width: 0;
   border-radius: 6px;
   border: 1px solid var(--line);
   background: var(--bg-2);
