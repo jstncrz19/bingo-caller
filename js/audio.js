@@ -104,7 +104,7 @@ const AudioCaller = (() => {
 
   async function previewVoice(voiceURI) {
     unlock();
-    await speak("B 12. Let's play bingo!", voiceURI, 1);
+    await speak("B 12, under the B, 12", voiceURI, 1);
   }
 
   return { unlock, callNumber, playChime, playShuffle, getVoices, previewVoice, speak };

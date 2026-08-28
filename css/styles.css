@@ -209,7 +209,9 @@ button, select, input { font-family: inherit; }
 .cell.manual:hover { border-color: var(--accent); }
 
 .side-wrap { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
-.call-cluster { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; flex: 0 0 auto; }
+.side-wrap > .call-cluster { flex-direction: column; gap: 14px; }
+.call-cluster { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; flex: 0 0 auto; max-width: 100%; }
+#previous-balls { flex-direction: row; flex-wrap: wrap; gap: 10px; width: 100%; }
 .ball {
   border-radius: 50%;
   display: grid;
@@ -225,9 +227,9 @@ button, select, input { font-family: inherit; }
 .ball.current { width: 150px; height: 150px; }
 .ball.current .letter { font-size: 1.5rem; }
 .ball.current .num { font-size: 4rem; }
-.ball.prev { width: 62px; height: 62px; opacity: 0.95; }
-.ball.prev .letter { font-size: .95rem; }
-.ball.prev .num { font-size: 1.55rem; }
+.ball.prev { width: 56px; height: 56px; opacity: 0.95; }
+.ball.prev .letter { font-size: .9rem; }
+.ball.prev .num { font-size: 1.4rem; }
 .ball.placeholder { background: var(--panel); color: var(--muted); box-shadow: none; border: 2px dashed var(--line); }
 .ball.B { background: radial-gradient(circle at 32% 28%, #ef9a9a, var(--ball-b)); color: #fff; }
 .ball.I { background: radial-gradient(circle at 32% 28%, #90caf9, var(--ball-i)); color: #fff; }
