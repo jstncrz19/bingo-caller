@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TV Diagnostics</title>
+<style>
+  body { font-family: sans-serif; background: #111; color: #eee; padding: 14px; font-size: 16px; }
+  h1 { font-size: 20px; }
+  h2 { font-size: 15px; margin-top: 18px; border-bottom: 1px solid #333; padding-bottom: 4px; }
+  pre { background: #1d1d1d; padding: 8px; border-radius: 6px; white-space: pre-wrap; word-break: break-all; font-size: 13px; }
+  button { font-size: 26px; padding: 16px 26px; margin: 6px; border-radius: 8px; border: none; background: #2a7; color: #fff; }
+  .ok { color: #2a7; font-weight: bold; }
+  .bad { color: #e55; font-weight: bold; }
+</style>
+</head>
+<body>
+<h1>TV / Browser Diagnostics</h1>
+<h2>User agent</h2>
+<pre id="ua">…</pre>
+<h2>Engine / capability flags</h2>
+<pre id="flags">…</pre>
+<h2>Inline script + button test</h2>
+<button id="btn" onclick="log('CLICK via inline onclick fired')">Click me (inline onclick)</button>
+<button id="btn2">Click me (addEventListener)</button>
+<p id="clicklog">No clicks yet.</p>
+
+<script>
+  var logEl = document.getElementById("clicklog");
+  function log(msg, ok) {
+    logEl.textContent = (ok ? "[OK] " : "[!!] ") + msg + "\n" + logEl.textContent;
+  }
+
+  var ua = (navigator.userAgent || "") + "\nappVersion: " + (navigator.appVersion || "");
+  document.getElementById("ua").textContent = ua;
+
+  function has(name) {
+    var v = !!window[name];
+    return name + ": " + (v ? "YES" : "no");
+  }
+  var flags = [
+    has("AudioContext") + " (webkitAudioContext: " + (!!window.webkitAudioContext) + ")",
+    "SpeechSynthesis: " + ("speechSynthesis" in window),
+    "Promise: " + (!!window.Promise),
+    "fetch: " + (!!window.fetch),
+    "localStorage: " + (function(){ try { localStorage.setItem("t","1"); return true; } catch(e){ return false; } })(),
+    "requestFullscreen: " + (!!document.documentElement.requestFullscreen) + " (webkitRequestFullscreen: " + (!!document.documentElement.webkitRequestFullscreen) + ")",
+    "screen: " + screen.width + "x" + screen.height + " css=" + (window.devicePixelRatio || 1),
+    "inner: " + window.innerWidth + "x" + window.innerHeight,
+  ].join("\n");
+  document.getElementById("flags").textContent = flags;
+
+  document.getElementById("btn2").addEventListener("click", function(){ log("CLICK via addEventListener fired"); }, false);
+
+  try {
+    window.Promise.resolve(1).then(function(){ log("Promise runs OK"); });
+  } catch (e) { log("Promise broken: " + e.message, true); }
+
+  (function(){
+    try {
+      var arr = ["a","b","c"];
+      var hasArrow = (function(){ try { eval("var f=()=>1; f();"); return true; } catch(e){ return false; } })();
+      var hasConst = (function(){ try { eval("const x=1; x;"); return true; } catch(e){ return false; } })();
+      var hasErr = (function(){ try { eval("[1,2].includes(2);"); return true; } catch(e){ return false; } })();
+      var hasLet = (function(){ try { eval("let y=1; y;"); return true; } catch(e){ return false; } })();
+      log("arrow fn: " + hasArrow + " | const: " + hasConst + " | array.includes: " + hasErr + " | let: " + hasLet);
+    } catch(e){ log("cap test failed", true); }
+  })();
+
+  log("Page loaded. Click a button — a green [OK] means the JS callback runs.");
+</script>
+</body>
+</html>
