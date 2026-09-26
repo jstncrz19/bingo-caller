@@ -15,9 +15,28 @@ const AudioCaller = (function () {
 
   var letters = ["B", "I", "N", "G", "O"];
 
+  // ---- recorded audio cache busting ---------------------------------------
+  // The call and chime files use fixed filenames, so after audio/calls/*.wav
+  // are regenerated a browser (and the GitHub Pages CDN, which serves
+  // Cache-Control: max-age=600) would keep handing back the previous
+  // recordings. Every audio URL therefore gets a version query appended.
+  //
+  // This is deliberately separate from the app version (APP_VERSION in
+  // index.html / version.json). That version changes on every UI tweak, and
+  // tying audio to it would re-download every call file for every user on
+  // every release. Bump AUDIO_VERSION only when audio/calls/*.wav changes.
+  //
+  //   1 = original Windows SAPI recordings
+  //   2 = Piper TTS recordings
+  var AUDIO_VERSION = "2";
+
+  function audioUrl(path) {
+    return path + "?av=" + AUDIO_VERSION;
+  }
+
   function fileFor(n) {
     var letter = letterForNumber(n).toLowerCase();
-    return "audio/calls/" + letter + "-" + n + ".wav";
+    return audioUrl("audio/calls/" + letter + "-" + n + ".wav");
   }
 
   function unlock() {
@@ -29,7 +48,7 @@ const AudioCaller = (function () {
       if (audioCtx.state === "suspended") audioCtx.resume();
     } catch (e) {}
     try {
-      player.src = "audio/chimes/silent.wav";
+      player.src = audioUrl("audio/chimes/silent.wav");
       var p = player.play();
       if (p && typeof p.catch === "function") p.catch(function () {});
     } catch (e) {}
@@ -81,10 +100,10 @@ const AudioCaller = (function () {
     preloadStarted = true;
     var queue = [];
     for (var n = 1; n <= 75; n++) queue.push(fileFor(n));
-    queue.push("audio/chimes/ding.wav");
-    queue.push("audio/chimes/bell.wav");
-    queue.push("audio/chimes/pop.wav");
-    queue.push("audio/chimes/blower.wav");
+    queue.push(audioUrl("audio/chimes/ding.wav"));
+    queue.push(audioUrl("audio/chimes/bell.wav"));
+    queue.push(audioUrl("audio/chimes/pop.wav"));
+    queue.push(audioUrl("audio/chimes/blower.wav"));
     var i = 0;
     function next() {
       if (i >= queue.length) return;
@@ -188,12 +207,12 @@ const AudioCaller = (function () {
 
   function playChime(name) {
     unlock();
-    return playFile("audio/chimes/" + (name || "ding") + ".wav");
+    return playFile(audioUrl("audio/chimes/" + (name || "ding") + ".wav"));
   }
 
   function playShuffle() {
     unlock();
-    return playFile("audio/chimes/blower.wav");
+    return playFile(audioUrl("audio/chimes/blower.wav"));
   }
 
   function previewVoice(voiceURI) {

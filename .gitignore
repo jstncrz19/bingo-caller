@@ -4,3 +4,11 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+
+# Local Piper TTS models / voices (large binaries - never commit these).
+# Voice files are kept outside the repo; see README "Regenerate call audio".
+*.onnx
+*.onnx.json
+voices/
+piper/
+*.piper
