@@ -14,13 +14,21 @@ A hall-style 75-ball bingo caller inspired by [letsplaybingo.io](https://letspla
 
 ## Run locally
 
-Open `index.html` in Chrome or Edge, or from this folder:
+Use the bundled dev server, which watches `css/`, `js/` and `icons/` and pushes
+updates to the open page:
 
 ```powershell
-python -m http.server 8080
+node server.js
 ```
 
 Then visit http://localhost:8080
+
+Edits to `css/styles.css` are hot-swapped (the running game is preserved); edits
+to JS or HTML trigger a full page reload. Set `LIVE_RELOAD=0` to turn watching
+off, or `PORT=3000` to use a different port.
+
+> Do not use `python -m http.server` or open `index.html` from disk for
+> development - neither can watch files, so CSS changes need a manual refresh.
 
 Click **Start Game** once so the browser allows sound.
 

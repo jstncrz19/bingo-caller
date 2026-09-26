@@ -163,7 +163,7 @@ html, body { touch-action: manipulation; }
 
 .board {
   display: grid;
-  gap: 8px;
+  gap: 30px;
 }
 .board-row {
   display: grid;
@@ -268,7 +268,7 @@ html, body { touch-action: manipulation; }
 .stat b { display: block; font-size: 0.9rem; }
 .stat span { color: var(--muted); font-size: 0.56rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
 
-.pattern-box { background: var(--panel); border-radius: 12px; padding: 6px; flex: 1 1 auto; overflow: hidden; }
+.pattern-box { background: var(--panel); border-radius: 12px; padding: 06px; flex: 1 1 auto; overflow: hidden; }
 .pattern-box h3 { margin: 0 0 4px; font-size: 0.7rem; display: flex; justify-content: space-between; }
 .pattern-grid {
   display: grid;
@@ -285,7 +285,7 @@ html, body { touch-action: manipulation; }
   background: var(--bg-2);
   cursor: pointer;
 }
-.pattern-box #pattern-menu { margin-top: 6px; padding: 4px; font-size: 0.75rem; }
+.pattern-box #pattern-menu { margin-top: 5px; padding: 4px; font-size: 0.75rem; }
 .pattern-cell.on { background: var(--accent); border-color: var(--accent); }
 .pattern-cell.free { outline: 1px dashed var(--muted); }
 .settings-pattern-grid {
@@ -547,7 +547,7 @@ html, body { touch-action: manipulation; }
     gap: 8px;
   }
   .board-wrap .bottom-controls .controls { flex-wrap: nowrap; gap: 4px; }
-  .board-wrap .bottom-controls .btn { padding: 7px 10px; font-size: 0.74rem; border-radius: 8px; }
+  .board-wrap .bottom-controls .btn { padding: 7px 10px; font-size: 0.50rem; border-radius: 8px; }
   .board-wrap .countdown { height: 7px; flex: 1 1 auto; }
 
   .side-wrap { overflow: hidden; min-height: 0; }
